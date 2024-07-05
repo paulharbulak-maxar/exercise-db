@@ -4,14 +4,14 @@ from sqlmodel import Field, Session, SQLModel, create_engine, select
 
 from initialize_db import insert_records
 from models.models import (
-    User,
-    Program,
-    Workout,
-    MuscleGroup,
-    Muscle,
     Exercise,
+    Muscle,
+    MuscleGroup,
+    Program,
+    User,
     UserExercise,
-    UserSet
+    UserSet,
+    Workout,
 )
 
 sqlite_file_name = "exercise.db"

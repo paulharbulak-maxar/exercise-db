@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "exercise-db"
+version = "0.1.0"
+description = "UI and API for managing a database of workouts and exercises"
+authors = ["Paul Harbulak <paul.harbulak@maxar.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.111.0"
+sqlmodel = "^0.0.19"
+alembic = "^1.13.2"
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.4.2"
+flake8 = "^7.1.0"
+pre-commit = "^3.7.1"
+isort = "^5.13.2"
+
+[tool.isort]
+profile = "black"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

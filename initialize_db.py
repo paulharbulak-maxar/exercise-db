@@ -1,18 +1,17 @@
 import csv
-
 from datetime import datetime
 
 from sqlmodel import Session, select
 
 from models.models import (
-    User,
-    Program,
-    Workout,
-    MuscleGroup,
-    Muscle,
     Exercise,
+    Muscle,
+    MuscleGroup,
+    Program,
+    User,
     UserExercise,
-    UserSet
+    UserSet,
+    Workout,
 )
 
 
@@ -23,7 +22,7 @@ def insert_records(engine):
         first_name="Paul",
         email="paul.harbulak@gmail.com",
         creation_date=datetime.now(),
-        last_login_date=datetime.now()
+        last_login_date=datetime.now(),
     )
 
     programs = [
@@ -47,7 +46,7 @@ def insert_records(engine):
     back = MuscleGroup(group_name="back")
     shoulders = MuscleGroup(group_name="shoulders")
     core = MuscleGroup(group_name="core")
-    
+
     muscle_groups = [legs, arms, chest, back, shoulders, core]
 
     quads = Muscle(muscle_name="quadriceps", muscle_group_id=legs.id)
@@ -99,9 +98,7 @@ def insert_records(engine):
     ]
 
     exercises = []
-    field_names = [
-        "exercise_name", "muscle_primary", "muscle_secondary", "is_compound"
-    ]
+    field_names = ["exercise_name", "muscle_primary", "muscle_secondary", "is_compound"]
     with open("models/exercises.csv", newline="") as csvfile:
         reader = csv.DictReader(csvfile, fieldnames=field_names)
         for row in reader:
