@@ -1,0 +1,15 @@
+<html>
+<head>
+    <title>Programs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <h1 class="text-3xl font-bold underline text-clifford">Programs</h1>
+    <ul>
+    {% for program in programs %}
+        <li>{{ program.program_name }}</li>
+    {% endfor %}
+    </ul>
+
+</body>
+</html>
