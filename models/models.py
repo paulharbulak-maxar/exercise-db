@@ -13,10 +13,37 @@ class User(SQLModel, table=True):
     last_login_date: datetime | None
 
 
+class ProgramType(SQLModel, table=True):
+    _tablename__ = "program_type"
+    id: int | None = Field(default=None, primary_key=True)
+    name: str
+
+
 class Program(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     user_id: int | None = Field(default=None, foreign_key="user.id")
-    program_name: str
+    program_type_id: int | None = Field(default=None, foreign_key="program_type.id")
+    start_date: datetime
+    description: str | None
+
+
+class ProgramWorkout(SQLModel, table=True):
+    __tablename__ = "program_workout"
+    id: int | None = Field(default=None, primary_key=True)
+    program_id: int | None = Field(default=None, foreign_key="program.id")
+    day_of_week: int
+    label: str | None
+
+
+class ProgramExercise(SQLModel, table=True):
+    __tablename__ = "program_exercise"
+    id: int | None = Field(default=None, primary_key=True)
+    program_workout_id: int | None = Field(
+        default=None, foreign_key="program_workout.id"
+    )
+    exercise_id: int | None = Field(default=None, foreign_key="exercise.id")
+    sets: int
+    reps: int
 
 
 class Workout(SQLModel, table=True):
@@ -58,7 +85,7 @@ class UserExercise(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     workout_id: int | None = Field(default=None, foreign_key="workout.id")
     exercise_id: int | None = Field(default=None, foreign_key="exercise.id")
-    sets: int
+    notes: str | None
 
 
 class UserSet(SQLModel, table=True):
