@@ -211,7 +211,7 @@ def insert_records(engine):  # exercise_table
             ("Incline Dumbbell Curl", biceps.id, None, False),
             ("Drag Curl", biceps.id, None, False),
             ("Concentration Curl", biceps.id, None, False),
-            ("Hammer Curl", brachialis, biceps.id, False),
+            ("Hammer Curl", brachialis.id, biceps.id, False),
             ("Reverse Curl", brachioradialis.id, biceps.id, False),
             ("Bench Dips", triceps.id, None, False),
             ("Parallel Bar Dips", triceps.id, chest.id, True),
@@ -336,14 +336,15 @@ def upgrade() -> None:
     program_table = op.create_table(
         "program",
         sa.Column("id", sa.INTEGER(), nullable=False),
-        sa.Column("user_id", sa.INTEGER(), nullable=True),
+        sa.Column("name", sa.VARCHAR(), nullable=False),
+        # sa.Column("user_id", sa.INTEGER(), nullable=True),
         sa.Column("program_type_id", sa.INTEGER(), nullable=False),
         sa.Column("start_date", sa.DATETIME(), nullable=False),
         sa.Column("description", sa.VARCHAR(), nullable=True),
-        sa.ForeignKeyConstraint(
-            ["user_id"],
-            ["user.id"],
-        ),
+        # sa.ForeignKeyConstraint(
+        #     ["user_id"],
+        #     ["user.id"],
+        # ),
         sa.ForeignKeyConstraint(
             ["program_type_id"],
             ["program_type.id"],
@@ -351,8 +352,8 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
     )
 
-    program_workout_table = op.create_table(
-        "program_workout",
+    workout_template_table = op.create_table(
+        "workout_template",
         sa.Column("id", sa.INTEGER(), nullable=False),
         sa.Column("program_id", sa.INTEGER(), nullable=False),
         sa.Column("label", sa.VARCHAR(), nullable=True),
@@ -365,17 +366,14 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
     )
 
-    program_exercise_table = op.create_table(
-        "program_exercise",
+    template_exercise_table = op.create_table(
+        "template_exercise",
         sa.Column("id", sa.INTEGER(), nullable=False),
-        sa.Column("program_workout_id", sa.INTEGER(), nullable=False),
+        sa.Column("workout_template_id", sa.INTEGER(), nullable=False),
         sa.Column("exercise_id", sa.INTEGER(), nullable=False),
-        sa.Column("sets", sa.INTEGER(), nullable=False),
-        sa.Column("rep_min", sa.INTEGER(), nullable=False),
-        sa.Column("rep_max", sa.INTEGER(), nullable=True),
         sa.ForeignKeyConstraint(
-            ["program_workout_id"],
-            ["program_workout.id"],
+            ["workout_template_id"],
+            ["workout_template.id"],
         ),
         sa.ForeignKeyConstraint(
             ["exercise_id"],

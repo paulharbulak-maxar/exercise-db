@@ -1,4 +1,8 @@
-from fastapi import FastAPI, Request
+from datetime import date, datetime
+from typing import Annotated
+
+import uvicorn
+from fastapi import FastAPI, Form, Request
 from fastapi.templating import Jinja2Templates
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 
@@ -8,6 +12,7 @@ from models.models import (
     Muscle,
     MuscleGroup,
     Program,
+    ProgramType,
     User,
     UserExercise,
     UserSet,
@@ -52,9 +57,57 @@ def read_users():
         return users
 
 
+# Program Type
+@app.post("/program_types/", response_model=ProgramType)
+def create_program_type(program_type: ProgramType):
+    with Session(engine) as session:
+        session.add(program_type)
+        session.commit()
+        session.refresh(program_type)
+        return program_type
+
+
+@app.get("/program_types/", response_model=list[ProgramType])
+def read_program_types():
+    with Session(engine) as session:
+        users = session.exec(select(ProgramType)).all()
+        return users
+
+
+# ***************************************
+# TODO: Create templates
+# Creating programs, viewing a selected program and adding workout templates, creating
+# workouts (selecting exercises, entering sets--weight and reps), viewing all workouts in
+# program (e.g. - both calendar and list), viewing and updating selected workouts
+# workout = select exercise enter weight, enter reps, click button to add another exercise (JS)
+# OR just have 6-8 entries and only use what is actually entered
+# ***************************************
+
 # Program
+# @app.post("/programs/", response_model=Program)
+# def create_program(program: Program):
+#     with Session(engine) as session:
+#         session.add(program)
+#         session.commit()
+#         session.refresh(program)
+#         return program
+
+
 @app.post("/programs/", response_model=Program)
-def create_program(program: Program):
+# def create_program(program: Program):
+def create_program(
+    name: Annotated[str, Form()],
+    program_type_id: Annotated[int, Form()],
+    start_date: Annotated[str, Form()],
+    description: Annotated[str, Form()],
+):
+    program = Program(
+        name=name,
+        program_type_id=program_type_id,
+        start_date=datetime.strptime(start_date, "%Y-%m-%d").date(),
+        description=description,
+    )
+
     with Session(engine) as session:
         session.add(program)
         session.commit()
@@ -66,28 +119,77 @@ def create_program(program: Program):
 def read_programs(request: Request):
     with Session(engine) as session:
         programs = session.exec(select(Program)).all()
+        program_types = session.exec(select(ProgramType)).all()
         return templates.TemplateResponse(
-            request=request, name="test.html", context={"programs": programs}
+            request=request,
+            name="programs.html",
+            context={"programs": programs, "program_types": program_types},
         )
 
         # return programs
 
 
+# Program Workout
+# Form for selecting n number of exercises for each workout
+@app.post("/programs/", response_model=Program)
+# def create_program(program: Program):
+def create_program(
+    name: Annotated[str, Form()],
+    program_type_id: Annotated[int, Form()],
+    start_date: Annotated[str, Form()],
+    description: Annotated[str, Form()],
+):
+    program = Program(
+        name=name,
+        program_type_id=program_type_id,
+        start_date=datetime.strptime(start_date, "%Y-%m-%d").date(),
+        description=description,
+    )
+
+    with Session(engine) as session:
+        session.add(program)
+        session.commit()
+        session.refresh(program)
+        return program
+
+
+@app.get("/programs/", response_model=list[Program])
+def read_programs(request: Request):
+    with Session(engine) as session:
+        programs = session.exec(select(Program)).all()
+        program_types = session.exec(select(ProgramType)).all()
+        return templates.TemplateResponse(
+            request=request,
+            name="programs.html",
+            context={"programs": programs, "program_types": program_types},
+        )
+
+
 # Workout
 @app.post("/workouts/", response_model=Workout)
-def create_workout(workout: Workout):
+# def create_workout(workout: Workout):
+def create_workout(program: Annotated[str, Form()]):
+    workout = Workout(program_id=program, date=date.today())
     with Session(engine) as session:
         session.add(workout)
         session.commit()
         session.refresh(workout)
+
         return workout
 
 
 @app.get("/workouts/", response_model=list[Workout])
-def read_workouts():
+def read_workouts(request: Request):
     with Session(engine) as session:
         workouts = session.exec(select(Workout)).all()
-        return workouts
+        programs = session.exec(select(Program)).all()
+
+        return templates.TemplateResponse(
+            request=request,
+            name="workouts.html",
+            context={"workouts": workouts, "programs": programs},
+        )
+        # return workouts
 
 
 # MuscleGroup
@@ -173,3 +275,7 @@ def read_users():
     with Session(engine) as session:
         user_sets = session.exec(select(UserSet)).all()
         return user_sets
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=8000)
