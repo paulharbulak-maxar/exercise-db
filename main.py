@@ -30,6 +30,26 @@ connect_args = {"check_same_thread": False}
 engine = create_engine(sqlite_url, echo=True, connect_args=connect_args)
 templates = Jinja2Templates(directory="templates/")
 
+DAYS = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+]
+
+
+def get_weekday(d):
+    if d > 0 and d <= 7:
+        return DAYS[d - 1]
+    else:
+        return "ERROR"
+
+
+templates.env.globals["get_weekday"] = get_weekday
+
 
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
