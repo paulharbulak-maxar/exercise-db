@@ -263,7 +263,7 @@ def insert_records(engine):  # exercise_table
 
         for e in exercises:
             kwargs = {
-                "exercise_name": e[0],
+                "name": e[0],
                 "muscle_primary": e[1],
                 "muscle_secondary": e[2],
                 "is_compound": e[3],
@@ -311,7 +311,7 @@ def upgrade() -> None:
     exercise_table = op.create_table(
         "exercise",
         sa.Column("id", sa.INTEGER(), nullable=False),
-        sa.Column("exercise_name", sa.VARCHAR(), nullable=False),
+        sa.Column("name", sa.VARCHAR(), nullable=False),
         sa.Column("muscle_primary", sa.INTEGER(), nullable=True),
         sa.Column("muscle_secondary", sa.INTEGER(), nullable=True),
         sa.Column("is_compound", sa.BOOLEAN(), nullable=False),
@@ -358,7 +358,6 @@ def upgrade() -> None:
         sa.Column("program_id", sa.INTEGER(), nullable=False),
         sa.Column("label", sa.VARCHAR(), nullable=True),
         sa.Column("day_of_week", sa.INTEGER(), nullable=False),
-        sa.Column("start_date", sa.DATETIME(), nullable=False),
         sa.ForeignKeyConstraint(
             ["program_id"],
             ["program.id"],
@@ -428,15 +427,15 @@ def upgrade() -> None:
     emg_activation_table = op.create_table(
         "emg_activation",
         sa.Column("id", sa.INTEGER(), nullable=False),
-        sa.Column("muscle", sa.INTEGER(), nullable=True),
-        sa.Column("exercise", sa.INTEGER(), nullable=True),
+        sa.Column("muscle_id", sa.INTEGER(), nullable=True),
+        sa.Column("exercise_id", sa.INTEGER(), nullable=True),
         sa.Column("activation", sa.INTEGER(), nullable=False),
         sa.ForeignKeyConstraint(
-            ["exercise"],
+            ["exercise_id"],
             ["exercise.id"],
         ),
         sa.ForeignKeyConstraint(
-            ["muscle"],
+            ["muscle_id"],
             ["muscle.id"],
         ),
         sa.PrimaryKeyConstraint("id"),

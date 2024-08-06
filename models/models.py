@@ -18,7 +18,7 @@ class ProgramType(SQLModel, table=True):
     __tablename__ = "program_type"
     id: int | None = Field(default=None, primary_key=True)
     name: str
-    programs: Optional["Program"] = Relationship(
+    programs: list["Program"] = Relationship(
         back_populates="program_type",
         sa_relationship_kwargs=dict(lazy="selectin"),
     )
@@ -35,17 +35,25 @@ class Program(SQLModel, table=True):
     )
     start_date: datetime
     description: Optional[str]
+    workout_templates: list["WorkoutTemplate"] = Relationship(
+        back_populates="program",
+        sa_relationship_kwargs=dict(lazy="selectin"),
+    )
 
 
 class WorkoutTemplate(SQLModel, table=True):
     __tablename__ = "workout_template"
     id: int | None = Field(default=None, primary_key=True)
     program_id: int | None = Field(default=None, foreign_key="program.id")
+    program: Optional["Program"] = Relationship(
+        back_populates="workout_templates",
+        sa_relationship_kwargs=dict(lazy="selectin"),
+    )
     # TODO: Limit to 1-7 & create Enum to get string from number in endpoint
     day_of_week: int
     label: str | None
-    exercises: Optional["TemplateExercise"] = Relationship(
-        # back_populates="muscle_group",
+    exercises: list["TemplateExercise"] = Relationship(
+        # back_populates="workout_template",
         sa_relationship_kwargs=dict(lazy="selectin"),
     )
 
@@ -70,7 +78,7 @@ class Workout(SQLModel, table=True):
         sa_relationship_kwargs=dict(lazy="selectin"),
     )
     date: datetime
-    exercises: Optional["UserExercise"] = Relationship(
+    exercises: list["UserExercise"] = Relationship(
         # back_populates="muscle_group",
         sa_relationship_kwargs=dict(lazy="selectin"),
     )
@@ -80,7 +88,7 @@ class MuscleGroup(SQLModel, table=True):
     __tablename__ = "muscle_group"
     id: int | None = Field(default=None, primary_key=True)
     group_name: str
-    muscles: Optional["Muscle"] = Relationship(
+    muscles: list["Muscle"] = Relationship(
         back_populates="muscle_group",
         sa_relationship_kwargs=dict(lazy="selectin"),
     )
@@ -94,13 +102,13 @@ class Muscle(SQLModel, table=True):
         back_populates="muscles",
         sa_relationship_kwargs=dict(lazy="selectin"),
     )
-    primary_exercises: Optional["Exercise"] = Relationship(
+    primary_exercises: list["Exercise"] = Relationship(
         back_populates="primary_muscles",
         sa_relationship_kwargs=dict(
             lazy="selectin", foreign_keys="[Exercise.muscle_primary]"
         ),
     )
-    secondary_exercises: Optional["Exercise"] = Relationship(
+    secondary_exercises: list["Exercise"] = Relationship(
         back_populates="secondary_muscles",
         sa_relationship_kwargs=dict(
             lazy="selectin", foreign_keys="[Exercise.muscle_secondary]"
@@ -110,17 +118,17 @@ class Muscle(SQLModel, table=True):
 
 class Exercise(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    exercise_name: str
+    name: str
     muscle_primary: int | None = Field(default=None, foreign_key="muscle.id")
     muscle_secondary: int | None = Field(default=None, foreign_key="muscle.id")
     is_compound: bool
-    primary_muscles: Optional["Muscle"] = Relationship(
+    primary_muscles: list["Muscle"] = Relationship(
         back_populates="primary_exercises",
         sa_relationship_kwargs=dict(
             lazy="selectin", foreign_keys="[Exercise.muscle_primary]"
         ),
     )
-    secondary_muscles: Optional["Muscle"] = Relationship(
+    secondary_muscles: list["Muscle"] = Relationship(
         back_populates="secondary_exercises",
         sa_relationship_kwargs=dict(
             lazy="selectin", foreign_keys="[Exercise.muscle_secondary]"
@@ -140,13 +148,14 @@ class EmgActivation(SQLModel, table=True):
     activation: int
 
 
+# TODO: Change UserExercise/UserSet to WorkoutExercise/WorkoutSet
 class UserExercise(SQLModel, table=True):
     __tablename__ = "user_exercise"
     id: int | None = Field(default=None, primary_key=True)
     workout_id: int | None = Field(default=None, foreign_key="workout.id")
     exercise_id: int | None = Field(default=None, foreign_key="exercise.id")
     notes: str | None
-    sets: Optional["UserSet"] = Relationship(
+    sets: list["UserSet"] = Relationship(
         # back_populates="muscle_group",
         sa_relationship_kwargs=dict(lazy="selectin"),
     )

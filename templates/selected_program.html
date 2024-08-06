@@ -1,0 +1,56 @@
+<html>
+<head>
+    <title>Program</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="dark:bg-gray-500">
+    <h1 class="m-4 text-2xl md:text-3xl lg:text-4xl font-extrabold leading-none tracking-tight text-gray-900 dark:text-white">
+        {{ program.name }}
+    </h1>
+    <p class="m-4 text-lg text-gray-200">Start Date: {{ program.start_date }}</p>
+    <p class="m-4 text-lg text-gray-200">Type: {{ program.program_type.name }}</p>
+    <div class="relative overflow-x-auto m-4">
+        {% for workout_template in workout_templates %}
+        <p class="m-4 text-lg text-gray-200">{{ workout_template.label }}</p>
+        <ul>
+        {% for template_exercise in workout_template.exercises %}
+            <li>{{ template_exercise.exercise.name }}</li>
+        {% endfor %}
+        </ul>
+        {% endfor %}
+    </div>
+    <form action="/workout_templates" method="post" enctype="multipart/form-data">
+    <div class="form-group gap-2 m-2">
+        <div class="flex justify-center">
+            <h1 class="basis-1/2 m-4 text-xl md:text-2xl lg:text-3xl font-extrabold leading-none tracking-tight text-gray-900 dark:text-white">
+                Create New Workout Template
+            </h1>
+        </div>
+        <input class="hidden" id="program_id" name="program_id" value={{ program.id }}>
+        <div class="flex justify-center">
+            <div class="mb-4 basis-1/2">
+                <label for="day_of_week" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Day:</label>
+                <select id="day_of_week" name="day_of_week" class="basis-1/2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option value=1>Sunday</option>
+                    <option value=2>Monday</option>
+                    <option value=3>Tuesday</option>
+                    <option value=4>Wednesday</option>
+                    <option value=5>Thursday</option>
+                    <option value=6>Friday</option>
+                    <option value=7>Saturday</option>
+                </select>
+            </div>
+        </div>
+        <div class="mb-4 flex justify-center">
+            <div class="basis-1/2">
+                <label for="label" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Label:</label>
+                <input type="text" id="label" name="label" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            </div>
+        </div>
+        <div class="flex justify-center">
+            <button id="create" type='submit' class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">Create</button>
+        </div>
+    </div>
+</form>
+</body>
+</html>
