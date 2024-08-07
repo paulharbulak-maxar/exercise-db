@@ -49,6 +49,8 @@ def get_weekday(d):
 
 
 templates.env.globals["get_weekday"] = get_weekday
+templates.env.globals["enumerate"] = enumerate
+templates.env.globals["len"] = len
 
 
 def create_db_and_tables():
@@ -179,6 +181,9 @@ def create_workout_template(
         )
 
 
+# TODO: Add put method for workout_templates for updating day of week and label
+
+
 @app.get("/workout_templates/{template_id}", response_model=list[WorkoutTemplate])
 def get_workout_template(request: Request, template_id: int):
     with Session(engine) as session:
@@ -218,6 +223,11 @@ def create_template_exercise(
             ),
             status_code=status.HTTP_303_SEE_OTHER,
         )
+
+
+# TODO: Add DELETE method for template_exercises for removing exercise from template
+
+# TODO: Add PUT method for template_exercises for changing order
 
 
 # TODO: Create workouts
