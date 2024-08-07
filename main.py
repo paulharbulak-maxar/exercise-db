@@ -223,10 +223,29 @@ def create_template_exercise(
         )
 
 
-# TODO: Add DELETE method for template_exercises for removing exercise from template
+# TODO: Change to DELETE method for REST/AJAX
+@app.post("/template_exercises/{template_exercise_id}/delete")
+def delete_template_exercise(template_exercise_id: int):
+    with Session(engine) as session:
+        template_exercise = session.exec(
+            select(TemplateExercise).where(TemplateExercise.id == template_exercise_id)
+        ).first()
+
+        template_id = template_exercise.workout_template_id
+        print(f"Deleting template exercise {template_exercise_id}")
+        session.delete(template_exercise)
+        session.commit()
+
+        return RedirectResponse(
+            app.url_path_for(
+                "get_workout_template",
+                template_id=template_id,
+            ),
+            status_code=status.HTTP_303_SEE_OTHER,
+        )
+
 
 # TODO: Add PUT method for template_exercises for changing order
-
 
 # TODO: Create workouts
 # Creating workouts (selecting exercises, entering sets--weight and reps),

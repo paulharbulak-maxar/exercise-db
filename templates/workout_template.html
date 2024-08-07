@@ -5,6 +5,11 @@
         {{ get_weekday(workout_template.day_of_week) }} - {{ workout_template.label }}
     </h1>
     <div class="flex place-content-center">
+        <a href="{{ url_for('get_program', program_id=workout_template.program_id) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+            {{ workout_template.program.name }}
+        </a>
+    </div>
+    <div class="flex place-content-center">
         <div class="shrink overflow-x-auto m-4 shadow-md sm:rounded-lg">
             <table class="text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -21,7 +26,7 @@
                 <tbody>
                 {% if workout_template.exercises %}
                 {% for template_exercise in workout_template.exercises %}
-                <tr class="bg-white {{ 'border-b' if not loop.last }} dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                <tr class="bg-white {{ 'border-b' if not loop.last }} dark:bg-gray-800 dark:border-gray-700">
                     <td class="px-6 py-4">{{ template_exercise.exercise.id }}</td>
                     <td class="px-6 py-4">{{ template_exercise.exercise.name }}</td>
                     <td class="px-6 py-4">{{ template_exercise.exercise.primary_muscles.muscle_name.capitalize() }}</td>
@@ -31,9 +36,12 @@
                     <td class="px-6 py-4"></td>
                     {% endif %}
                     <td class="px-6 py-4">
-    <!--                    TODO: Add url_for deleting template_exercise-->
-                        <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Delete</a>
-                    </td>
+                    <form action="/template_exercises/{{ template_exercise.id }}/delete" method="post">
+                        <button id="delete" type='submit' class="w-full text-white bg-gray-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-gray-600 dark:hover:bg-red-700 dark:focus:ring-gray-800">
+                            Delete
+                        </button>
+                    </form>
+                </td>
                 </tr>
                 {% endfor %}
                 {% endif %}
