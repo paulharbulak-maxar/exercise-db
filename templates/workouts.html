@@ -1,9 +1,6 @@
-<html>
-<head>
-    <title>Workouts</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}Workout Log{% endblock %}
+{% block content %}
     <h1 class="text-3xl font-bold underline text-clifford">Workouts</h1>
     <ul>
     {% for workout in workouts %}
@@ -16,5 +13,4 @@
     </div>
     <button id="create" type='submit' class="btn btn-primary">Create</button>
 </form>
-</body>
-</html>
+{% endblock %}

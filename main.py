@@ -49,8 +49,6 @@ def get_weekday(d):
 
 
 templates.env.globals["get_weekday"] = get_weekday
-templates.env.globals["enumerate"] = enumerate
-templates.env.globals["len"] = len
 
 
 def create_db_and_tables():
@@ -96,8 +94,8 @@ def create_program_type(program_type: ProgramType):
 @app.get("/program_types/", response_model=list[ProgramType])
 def get_program_types():
     with Session(engine) as session:
-        users = session.exec(select(ProgramType)).all()
-        return users
+        program_types = session.exec(select(ProgramType)).all()
+        return program_types
 
 
 @app.post("/programs/", response_model=Program)

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>{% block title %}{% endblock %}</title>
+    <nav class="bg-white dark:bg-gray-700 p-2">
+        <ul class="font-sm flex flex-row justify-end">
+            <li class="mx-3">
+                <a href="{{ url_for('get_programs') }}" class="text-gray-900 hover:text-blue-700 dark:text-white">Programs</a>
+            </li>
+            <li class="mx-3">
+                <a href="#" class="text-gray-900 hover:text-blue-700 dark:text-white">About</a>
+            </li>
+        </ul>
+    </nav>
+    {% endblock %}
+</head>
+<body class="dark:bg-gray-900">
+    <div id="content">{% block content %}{% endblock %}</div>
+    <div id="footer">
+        {% block footer %}
+        {% endblock %}
+    </div>
+</body>
+</html>
