@@ -69,12 +69,13 @@ class TemplateExercise(SQLModel, table=True):
         sa_relationship_kwargs=dict(lazy="selectin"),
     )
     # TODO: Add workout order
+    # order: int | None
 
 
 class Workout(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    program_id: int | None = Field(default=None, foreign_key="program.id")
-    program: Optional["Program"] = Relationship(
+    template_id: int | None = Field(default=None, foreign_key="workout_template.id")
+    template: Optional["WorkoutTemplate"] = Relationship(
         # back_populates="workouts",
         sa_relationship_kwargs=dict(lazy="selectin"),
     )

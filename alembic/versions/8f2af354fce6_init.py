@@ -136,7 +136,7 @@ def insert_records(engine):  # exercise_table
             ("Bench Press", pecs.id, triceps.id, True),
             ("Dumbbell Bench Press", pecs.id, triceps.id, True),
             ("Incline Bench Press", pecs.id, shoulders.id, True),
-            ("Incline Dumbbell Bench Press", shoulders.id, triceps.id, True),
+            ("Incline Dumbbell Bench Press", pecs.id, shoulders.id, True),
             ("Decline Bench Press", pecs.id, triceps.id, True),
             ("Decline Dumbbell Bench Press", pecs.id, triceps.id, True),
             ("Board Press (1)", pecs.id, triceps.id, True),
@@ -384,11 +384,11 @@ def upgrade() -> None:
     workout_table = op.create_table(
         "workout",
         sa.Column("id", sa.INTEGER(), nullable=False),
-        sa.Column("program_id", sa.INTEGER(), nullable=True),
+        sa.Column("template_id", sa.INTEGER(), nullable=True),
         sa.Column("date", sa.DATETIME(), nullable=False),
         sa.ForeignKeyConstraint(
-            ["program_id"],
-            ["program.id"],
+            ["template_id"],
+            ["workout_template.id"],
         ),
         sa.PrimaryKeyConstraint("id"),
     )

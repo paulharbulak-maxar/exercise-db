@@ -141,7 +141,7 @@ def get_programs(request: Request):
 @app.get("/programs/{program_id}", response_model=list[Program])
 def get_program(request: Request, program_id: int):
     with Session(engine) as session:
-        program = session.exec(select(Program).where(Program.id == program_id)).first()
+        program = session.exec(select(Program).where(Program.id == program_id)).one()
         workout_templates = session.exec(
             select(WorkoutTemplate).where(WorkoutTemplate.program_id == program_id)
         ).all()
@@ -179,7 +179,30 @@ def create_workout_template(
         )
 
 
-# TODO: Add put method for workout_templates for updating day of week and label
+# TODO: Allow updating exercise order in put method
+@app.put("/workout_templates/{template_id}", response_model=WorkoutTemplate)
+def update_workout_template(
+    template_id: int,
+    program_id: Annotated[int, Form()],
+    day_of_week: Annotated[int, Form()],
+    label: Annotated[str, Form()],
+):
+    with Session(engine) as session:
+        workout_template = session.exec(
+            select(WorkoutTemplate).where(WorkoutTemplate.id == template_id)
+        ).one()
+
+        workout_template.program_id = program_id
+        workout_template.day_of_week = day_of_week
+        workout_template.label = label
+        session.add(workout_template)
+        session.commit()
+        session.refresh(workout_template)
+
+        return RedirectResponse(
+            app.url_path_for("get_workout_template", template_id=workout_template.id),
+            status_code=status.HTTP_303_SEE_OTHER,
+        )
 
 
 @app.get("/workout_templates/{template_id}", response_model=list[WorkoutTemplate])
@@ -187,7 +210,7 @@ def get_workout_template(request: Request, template_id: int):
     with Session(engine) as session:
         workout_template = session.exec(
             select(WorkoutTemplate).where(WorkoutTemplate.id == template_id)
-        ).first()
+        ).one()
 
         exercises = session.exec(select(Exercise)).all()
         return templates.TemplateResponse(
@@ -268,18 +291,45 @@ def create_workout(program: Annotated[str, Form()]):
         return workout
 
 
+@app.put("/workouts/{workout_id}", response_model=Workout)
+def update_workout(template_id: int, date: str, workout_id: int):
+    with Session(engine) as session:
+        workout = session.exec(select(Workout).where(Workout.id == workout_id)).one()
+
+        workout.template_id = template_id
+        workout.date = date
+        session.add(workout)
+        session.commit()
+        session.refresh(workout)
+
+        return workout
+
+        # return RedirectResponse(
+        #     app.url_path_for("get_workout_template", template_id=workout_template.id),
+        #     status_code=status.HTTP_303_SEE_OTHER,
+        # )
+
+
 @app.get("/workouts/", response_model=list[Workout])
 def get_workouts(request: Request):
     with Session(engine) as session:
         workouts = session.exec(select(Workout)).all()
         programs = session.exec(select(Program)).all()
 
+        return workouts
+
+
+@app.get("/workouts/{workout_id}", response_model=Workout)
+def get_workout(request: Request, workout_id: int):
+    with Session(engine) as session:
+        workout = session.exec(select(Workout).where(Workout.id == workout_id)).one()
+
+        # return workout
         return templates.TemplateResponse(
             request=request,
-            name="workouts.html",
-            context={"workouts": workouts, "programs": programs},
+            name="workout.html",
+            context={"workout": workout},
         )
-        # return workouts
 
 
 # MuscleGroup
@@ -344,10 +394,25 @@ def create_user_exercise(user_exercise: UserExercise):
 
 
 @app.get("/user_exercises/", response_model=list[UserExercise])
-def get_user_exercises():
+def get_user_exercises(workout_id: int = None):
     with Session(engine) as session:
+        # TODO: Add query param for workout_id
+        # user_exercises = session.exec(select(UserExercise).where(
+        #     UserExercise.workout_id == workout_id)
+        # ).all()
         user_exercises = session.exec(select(UserExercise)).all()
         return user_exercises
+
+
+@app.get("/user_exercises/{user_exercise_id}", response_model=UserExercise)
+def get_user_exercise(user_exercise_id: int):
+    with Session(engine) as session:
+        user_exercise = session.exec(
+            select(UserExercise).where(UserExercise.id == user_exercise_id)
+        ).one()
+
+        # TODO: Return user_exercise template
+        return user_exercise
 
 
 # UserSet
