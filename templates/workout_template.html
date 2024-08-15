@@ -33,9 +33,9 @@
                 </thead>
                 <tbody>
                 {% if workout_template.exercises %}
-                {% for template_exercise in workout_template.exercises %}
+                {% for template_exercise in workout_template.exercises|sort(attribute='order') %}
                 <tr class="bg-white {{ 'border-b' if not loop.last }} dark:bg-gray-800 dark:border-gray-700">
-                    <td class="px-6 py-4">{{ template_exercise.exercise.id }}</td>
+                    <td class="px-6 py-4">{{ template_exercise.order }}</td>
                     <td class="px-6 py-4">{{ template_exercise.exercise.name }}</td>
                     <td class="px-6 py-4">{{ template_exercise.exercise.primary_muscles.muscle_name.capitalize() }}</td>
                     {% if template_exercise.exercise.secondary_muscles %}
@@ -58,20 +58,20 @@
         </div>
     </div>
     <form action="/template_exercises" method="post" enctype="multipart/form-data">
-    <div class="flex flex-row justify-center">
-        <div class="form-group gap-2 m-2 w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
-            <h2 class="flex place-content-center mb-4 text-xl md:text-xl lg:text-xl font-bold leading-none tracking-tight text-gray-900 dark:text-white">
-                Add Exercise to Workout
-            </h2>
-            <input class="hidden" id="workout_template_id" name="workout_template_id" value={{ workout_template.id }}>
-            <label for="exercise_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Exercises</label>
-            <select id="exercise_id" name="exercise_id" class="mb-4 shrink bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                {% for exercise in exercises %}
-                    <option value={{exercise.id}}>{{ exercise.name }}</option>
-                 {% endfor %}
-            </select>
-            <button id="create" type='submit' class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Create</button>
+        <div class="flex flex-row justify-center">
+            <div class="form-group gap-2 m-2 w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
+                <h2 class="flex place-content-center mb-4 text-xl md:text-xl lg:text-xl font-bold leading-none tracking-tight text-gray-900 dark:text-white">
+                    Add Exercise to Workout
+                </h2>
+                <input class="hidden" id="workout_template_id" name="workout_template_id" value={{ workout_template.id }}>
+                <label for="exercise_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Exercises</label>
+                <select id="exercise_id" name="exercise_id" class="mb-4 shrink bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    {% for exercise in exercises %}
+                        <option value={{exercise.id}}>{{ exercise.name }}</option>
+                     {% endfor %}
+                </select>
+                <button id="create" type='submit' class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Create</button>
+            </div>
         </div>
-    </div>
-</form>
+    </form>
 {% endblock %}

@@ -368,6 +368,7 @@ def upgrade() -> None:
     template_exercise_table = op.create_table(
         "template_exercise",
         sa.Column("id", sa.INTEGER(), nullable=False),
+        sa.Column("order", sa.INTEGER(), nullable=False),
         sa.Column("workout_template_id", sa.INTEGER(), nullable=False),
         sa.Column("exercise_id", sa.INTEGER(), nullable=False),
         sa.ForeignKeyConstraint(
@@ -396,8 +397,9 @@ def upgrade() -> None:
     workout_exercise_table = op.create_table(
         "workout_exercise",
         sa.Column("id", sa.INTEGER(), nullable=False),
-        sa.Column("workout_id", sa.INTEGER(), nullable=True),
-        sa.Column("exercise_id", sa.INTEGER(), nullable=True),
+        sa.Column("order", sa.INTEGER(), nullable=False),
+        sa.Column("workout_id", sa.INTEGER(), nullable=False),
+        sa.Column("exercise_id", sa.INTEGER(), nullable=False),
         sa.Column("notes", sa.VARCHAR(), nullable=True),
         sa.ForeignKeyConstraint(
             ["exercise_id"],

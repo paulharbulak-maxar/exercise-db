@@ -61,6 +61,7 @@ class WorkoutTemplate(SQLModel, table=True):
 class TemplateExercise(SQLModel, table=True):
     __tablename__ = "template_exercise"
     id: int | None = Field(default=None, primary_key=True)
+    order: int = 0
     workout_template_id: int | None = Field(
         default=None, foreign_key="workout_template.id"
     )
@@ -81,7 +82,7 @@ class Workout(SQLModel, table=True):
     )
     date: datetime
     exercises: list["WorkoutExercise"] = Relationship(
-        # back_populates="muscle_group",
+        back_populates="workout",
         sa_relationship_kwargs=dict(lazy="selectin"),
     )
 
@@ -153,7 +154,12 @@ class EmgActivation(SQLModel, table=True):
 class WorkoutExercise(SQLModel, table=True):
     __tablename__ = "workout_exercise"
     id: int | None = Field(default=None, primary_key=True)
+    order: int = 0
     workout_id: int | None = Field(default=None, foreign_key="workout.id")
+    workout: Optional["Workout"] = Relationship(
+        back_populates="exercises",
+        sa_relationship_kwargs=dict(lazy="selectin"),
+    )
     exercise_id: int | None = Field(default=None, foreign_key="exercise.id")
     exercise: Optional["Exercise"] = Relationship(
         sa_relationship_kwargs=dict(lazy="selectin"),

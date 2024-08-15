@@ -223,17 +223,21 @@ def get_workout_template(request: Request, template_id: int):
 
 # Template Exercise
 @app.post("/template_exercises/", response_model=TemplateExercise)
-# def create_template_exercise(workout_templatetemplate_exercise: TemplateExercise):
 def create_template_exercise(
     workout_template_id: Annotated[int, Form()],
     exercise_id: Annotated[int, Form()],
 ):
-    template_exercise = TemplateExercise(
-        workout_template_id=workout_template_id,
-        exercise_id=exercise_id,
-    )
-
     with Session(engine) as session:
+        workout_template = session.exec(
+            select(WorkoutTemplate).where(WorkoutTemplate.id == workout_template_id)
+        ).one()
+
+        template_exercise = TemplateExercise(
+            order=len(workout_template.exercises) + 1,
+            workout_template_id=workout_template_id,
+            exercise_id=exercise_id,
+        )
+
         session.add(template_exercise)
         session.commit()
         session.refresh(template_exercise)
@@ -248,6 +252,7 @@ def create_template_exercise(
 
 
 # TODO: Change to DELETE method for REST/AJAX
+# @app.delete("/template_exercises/{template_exercise_id}")
 @app.post("/template_exercises/{template_exercise_id}/delete")
 def delete_template_exercise(template_exercise_id: int):
     with Session(engine) as session:
@@ -269,7 +274,32 @@ def delete_template_exercise(template_exercise_id: int):
         )
 
 
-# TODO: Add PUT method for template_exercises for changing order
+# @app.put("/template_exercises/{template_exercise_id}", response_model=TemplateExercise)
+@app.post(
+    "/template_exercises/{template_exercise_id}/update", response_model=TemplateExercise
+)
+def update_template_exercise(
+    template_exercise_id: int,
+    order: int,
+):
+    with Session(engine) as session:
+        template_exercise = session.exec(
+            select(TemplateExercise).where(TemplateExercise.id == template_exercise_id)
+        ).one()
+
+        template_exercise.order = order
+        session.add(template_exercise)
+        session.commit()
+        session.refresh(template_exercise)
+
+        return RedirectResponse(
+            app.url_path_for(
+                "get_workout_template",
+                template_id=template_exercise.workout_template_id,
+            ),
+            status_code=status.HTTP_303_SEE_OTHER,
+        )
+
 
 # TODO: Create workouts
 # Creating workouts (selecting exercises, entering sets--weight and reps),
@@ -294,7 +324,7 @@ def create_workout(template_id: Annotated[str, Form()]):
 
         for exercise in workout_template.exercises:
             workout_exercise = WorkoutExercise(
-                workout_id=workout.id, exercise_id=exercise.id
+                order=exercise.order, workout_id=workout.id, exercise_id=exercise.id
             )
             session.add(workout_exercise)
 
@@ -431,6 +461,16 @@ def get_workout_exercises(workout_id: int = None):
         return workout_exercises
 
 
+# @app.get("/workout_exercises/{workout_exercise_id}", response_model=WorkoutExercise)
+# def get_workout_exercise(workout_exercise_id: int):
+#     with Session(engine) as session:
+#         workout_exercise = session.exec(
+#             select(WorkoutExercise).where(WorkoutExercise.id == workout_exercise_id)
+#         ).one()
+#
+#         return workout_exercise
+
+
 @app.get("/workout_exercises/{workout_exercise_id}", response_model=WorkoutExercise)
 # def get_workout_exercise(workout_exercise_id: int):
 def get_workout_exercise(request: Request, workout_exercise_id: int):
@@ -439,11 +479,66 @@ def get_workout_exercise(request: Request, workout_exercise_id: int):
             select(WorkoutExercise).where(WorkoutExercise.id == workout_exercise_id)
         ).one()
 
-        # return workout_exercise
+        exercises = session.exec(select(Exercise)).all()
+
         return templates.TemplateResponse(
             request=request,
             name="workout_exercise.html",
-            context={"workout_exercise": workout_exercise},
+            context={"workout_exercise": workout_exercise, "exercises": exercises},
+        )
+
+
+# @app.put("/workout_exercises/{workout_exercise_id}", response_model=WorkoutExercise)
+@app.post(
+    "/workout_exercises/{workout_exercise_id}/update", response_model=WorkoutExercise
+)
+def update_workout_exercise(
+    workout_exercise_id: int,
+    order: Annotated[int, Form()],
+    exercise_id: Annotated[int, Form()],
+    notes: Annotated[str, Form()],
+):
+    with Session(engine) as session:
+        workout_exercise = session.exec(
+            select(WorkoutExercise).where(WorkoutExercise.id == workout_exercise_id)
+        ).one()
+
+        # TODO: Update order of all other exercises in workout
+        workout_exercise.order = order
+        workout_exercise.exercise_id = exercise_id
+        workout_exercise.notes = notes
+        session.add(workout_exercise)
+        session.commit()
+        session.refresh(workout_exercise)
+
+        # return workout_exercise
+        return RedirectResponse(
+            app.url_path_for("get_workout", workout_id=workout_exercise.workout_id),
+            status_code=status.HTTP_303_SEE_OTHER,
+        )
+
+
+# @app.delete("/workout_exercises/{workout_exercise_id}")
+@app.post(
+    "/workout_exercises/{workout_exercise_id}/delete", response_model=WorkoutExercise
+)
+def delete_workout_exercise(workout_exercise_id: int):
+    with Session(engine) as session:
+        workout_exercise = session.exec(
+            select(WorkoutExercise).where(WorkoutExercise.id == workout_exercise_id)
+        ).first()
+
+        workout_id = workout_exercise.workout_id
+        print(f"Deleting workout exercise {workout_id}")
+        session.delete(workout_exercise)
+        session.commit()
+
+        return RedirectResponse(
+            app.url_path_for(
+                "get_workout",
+                workout_id=workout_id,
+            ),
+            status_code=status.HTTP_303_SEE_OTHER,
         )
 
 
