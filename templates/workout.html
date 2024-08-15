@@ -39,7 +39,7 @@
                     <td class="px-6 py-4">{{ user_exercise.sets }}</td>
                     <td class="px-6 py-4">{{ user_exercise.notes }}</td>
                     <td class="px-6 py-4">
-                        <a href="{{ url_for('get_user_exercise', user_exercise_id=user_exercise.id) }}"
+                        <a href="{{ url_for('get_workout_exercise', user_exercise_id=user_exercise.id) }}"
                            class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
                             Edit
                         </a>

@@ -80,7 +80,7 @@ class Workout(SQLModel, table=True):
         sa_relationship_kwargs=dict(lazy="selectin"),
     )
     date: datetime
-    exercises: list["UserExercise"] = Relationship(
+    exercises: list["WorkoutExercise"] = Relationship(
         # back_populates="muscle_group",
         sa_relationship_kwargs=dict(lazy="selectin"),
     )
@@ -150,23 +150,24 @@ class EmgActivation(SQLModel, table=True):
     activation: int
 
 
-# TODO: Change UserExercise/UserSet to WorkoutExercise/WorkoutSet
-class UserExercise(SQLModel, table=True):
-    __tablename__ = "user_exercise"
+class WorkoutExercise(SQLModel, table=True):
+    __tablename__ = "workout_exercise"
     id: int | None = Field(default=None, primary_key=True)
     workout_id: int | None = Field(default=None, foreign_key="workout.id")
     exercise_id: int | None = Field(default=None, foreign_key="exercise.id")
     notes: str | None
-    sets: list["UserSet"] = Relationship(
+    sets: list["WorkoutSet"] = Relationship(
         # back_populates="muscle_group",
         sa_relationship_kwargs=dict(lazy="selectin"),
     )
 
 
-class UserSet(SQLModel, table=True):
-    __tablename__ = "user_set"
+class WorkoutSet(SQLModel, table=True):
+    __tablename__ = "workout_set"
     id: int | None = Field(default=None, primary_key=True)
-    user_exercise_id: int | None = Field(default=None, foreign_key="user_exercise.id")
+    workout_exercise_id: int | None = Field(
+        default=None, foreign_key="workout_exercise.id"
+    )
     set_number: int
     weight: int
     reps: int

@@ -9,9 +9,9 @@ from models.models import (
     MuscleGroup,
     Program,
     User,
-    UserExercise,
-    UserSet,
     Workout,
+    WorkoutExercise,
+    WorkoutSet,
 )
 
 

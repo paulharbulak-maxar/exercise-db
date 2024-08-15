@@ -22,9 +22,9 @@ from models.models import (
     Program,
     ProgramType,
     User,
-    UserExercise,
-    UserSet,
     Workout,
+    WorkoutExercise,
+    WorkoutSet,
 )
 
 # revision identifiers, used by Alembic.
@@ -393,12 +393,11 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
     )
 
-    user_exercise_table = op.create_table(
-        "user_exercise",
+    workout_exercise_table = op.create_table(
+        "workout_exercise",
         sa.Column("id", sa.INTEGER(), nullable=False),
         sa.Column("workout_id", sa.INTEGER(), nullable=True),
         sa.Column("exercise_id", sa.INTEGER(), nullable=True),
-        sa.Column("sets", sa.INTEGER(), nullable=False),
         sa.Column("notes", sa.VARCHAR(), nullable=True),
         sa.ForeignKeyConstraint(
             ["exercise_id"],
@@ -411,16 +410,16 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
     )
 
-    user_set_table = op.create_table(
-        "user_set",
+    workout_set_table = op.create_table(
+        "workout_set",
         sa.Column("id", sa.INTEGER(), nullable=False),
-        sa.Column("user_exercise_id", sa.INTEGER(), nullable=True),
+        sa.Column("workout_exercise_id", sa.INTEGER(), nullable=True),
         sa.Column("set_number", sa.INTEGER(), nullable=False),
         sa.Column("weight", sa.INTEGER(), nullable=False),
         sa.Column("reps", sa.INTEGER(), nullable=False),
         sa.ForeignKeyConstraint(
-            ["user_exercise_id"],
-            ["user_exercise.id"],
+            ["workout_exercise_id"],
+            ["workout_exercise.id"],
         ),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -449,8 +448,8 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     op.drop_table("emg_activation")
-    op.drop_table("user_exercise")
-    op.drop_table("user_set")
+    op.drop_table("workout_exercise")
+    op.drop_table("workout_set")
     op.drop_table("workout")
     op.drop_table("program_exercise")
     op.drop_table("program_workout")
