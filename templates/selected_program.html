@@ -11,15 +11,16 @@
         <div class="flex flex-col grow max-w-64">
             <a href="{{ url_for('get_workout_template', template_id=workout_template.id) }}"
                class="grow block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-            <h2 class="mb-2 text-md md:text-lg lg:text-xl text-gray-200 font-bold">
-                {{ get_weekday(workout_template.day_of_week) }} - {{ workout_template.label }}
-            </h2>
-            <ul class="text-sm font-medium text-gray-900 dark:text-white">
-            {% for template_exercise in workout_template.exercises %}
-                <li class="py-2">{{ template_exercise.exercise.name }}</li>
-            {% endfor %}
-            </ul>
+                <h2 class="mb-2 text-md md:text-lg lg:text-xl text-gray-200 font-bold">
+                    {{ get_weekday(workout_template.day_of_week) }} - {{ workout_template.label }}
+                </h2>
+                <ul class="text-sm font-medium text-gray-900 dark:text-white">
+                {% for template_exercise in workout_template.exercises %}
+                    <li class="py-2">{{ template_exercise.exercise.name }}</li>
+                {% endfor %}
+                </ul>
             </a>
+<!--            TODO: Add button for logging workout-->
         </div>
         {% endfor %}
     </div>
@@ -48,4 +49,5 @@
             </div>
         </div>
     </form>
+<!--    TODO: Add table for workout log-->
 {% endblock %}

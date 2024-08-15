@@ -23,6 +23,7 @@
                         <th scope="col" class="px-6 py-3">Order</th>
                         <th scope="col" class="px-6 py-3">Exercise</th>
                         <th scope="col" class="px-6 py-3">Sets</th>
+                        <th scope="col" class="px-6 py-3">Notes</th>
 <!--                        <th scope="col" class="px-6 py-3">Top Weight</th>-->
                         <th scope="col" class="px-6 py-3">
                             <span class="sr-only">Edit</span>
@@ -35,10 +36,13 @@
                 <tr class="bg-white {{ 'border-b' if not loop.last }} dark:bg-gray-800 dark:border-gray-700">
                     <td class="px-6 py-4">{{ user_exercise.id }}</td>
                     <td class="px-6 py-4">{{ user_exercise.exercise.name }}</td>
-                    <td class="px-6 py-4">4</td>
+                    <td class="px-6 py-4">{{ user_exercise.sets }}</td>
+                    <td class="px-6 py-4">{{ user_exercise.notes }}</td>
                     <td class="px-6 py-4">
                         <a href="{{ url_for('get_user_exercise', user_exercise_id=user_exercise.id) }}"
-                           class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                           class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                            Edit
+                        </a>
                     </td>
                 </tr>
                 {% endfor %}
