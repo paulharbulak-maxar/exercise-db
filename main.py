@@ -180,7 +180,8 @@ def create_workout_template(
 
 
 # TODO: Allow updating exercise order in put method
-@app.put("/workout_templates/{template_id}", response_model=WorkoutTemplate)
+# @app.put("/workout_templates/{template_id}", response_model=WorkoutTemplate)
+@app.post("/workout_templates/{template_id}/update", response_model=WorkoutTemplate)
 def update_workout_template(
     template_id: int,
     program_id: Annotated[int, Form()],
@@ -300,7 +301,7 @@ def create_workout(template_id: Annotated[str, Form()]):
         session.commit()
 
         return RedirectResponse(
-            app.url_path_for("get_workout", template_id=workout.id),
+            app.url_path_for("get_workout", workout_id=workout.id),
             status_code=status.HTTP_303_SEE_OTHER,
         )
 
@@ -316,20 +317,22 @@ def create_workout(template_id: Annotated[str, Form()]):
 #         return workout
 
 
-@app.put("/workouts/{workout_id}", response_model=Workout)
-def update_workout(template_id: int, date: str, workout_id: int):
+# @app.put("/workouts/{workout_id}", response_model=Workout)
+@app.post("/workouts/{workout_id}/update", response_model=Workout)
+# def update_workout(date: str, workout_id: int):
+def update_workout(workout_id: int, date: Annotated[str, Form()]):
     with Session(engine) as session:
         workout = session.exec(select(Workout).where(Workout.id == workout_id)).one()
-
-        workout.template_id = template_id
-        workout.date = date
+        # workout.template_id = workout.template_id
+        date_obj = datetime.strptime(date, "%Y-%m-%d")
+        workout.date = date_obj
         session.add(workout)
         session.commit()
         session.refresh(workout)
 
         # return workout
         return RedirectResponse(
-            app.url_path_for("get_workout", template_id=workout.id),
+            app.url_path_for("get_workout", workout_id=workout.id),
             status_code=status.HTTP_303_SEE_OTHER,
         )
 

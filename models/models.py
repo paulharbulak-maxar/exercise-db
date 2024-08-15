@@ -155,6 +155,9 @@ class WorkoutExercise(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     workout_id: int | None = Field(default=None, foreign_key="workout.id")
     exercise_id: int | None = Field(default=None, foreign_key="exercise.id")
+    exercise: Optional["Exercise"] = Relationship(
+        sa_relationship_kwargs=dict(lazy="selectin"),
+    )
     notes: str | None
     sets: list["WorkoutSet"] = Relationship(
         # back_populates="muscle_group",
