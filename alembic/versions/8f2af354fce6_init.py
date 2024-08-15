@@ -399,6 +399,7 @@ def upgrade() -> None:
         sa.Column("workout_id", sa.INTEGER(), nullable=True),
         sa.Column("exercise_id", sa.INTEGER(), nullable=True),
         sa.Column("sets", sa.INTEGER(), nullable=False),
+        sa.Column("notes", sa.VARCHAR(), nullable=True),
         sa.ForeignKeyConstraint(
             ["exercise_id"],
             ["exercise.id"],
