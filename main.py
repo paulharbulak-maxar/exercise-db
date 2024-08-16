@@ -380,12 +380,13 @@ def get_workouts(request: Request):
 def get_workout(request: Request, workout_id: int):
     with Session(engine) as session:
         workout = session.exec(select(Workout).where(Workout.id == workout_id)).one()
+        exercises = session.exec(select(Exercise)).all()
 
         # return workout
         return templates.TemplateResponse(
             request=request,
             name="workout.html",
-            context={"workout": workout},
+            context={"workout": workout, "exercises": exercises},
         )
 
 
@@ -441,13 +442,85 @@ def get_exercises():
 
 
 # WorkoutExercise
+# This is used to change order of other exercises when exercise order is updated
+def update_exercise_order(session, workout_exercise, order):
+    other_exercises = session.exec(
+        select(WorkoutExercise)
+        .where(WorkoutExercise.id != workout_exercise.id)
+        .where(WorkoutExercise.workout_id == workout_exercise.workout_id)
+    ).all()
+
+    for ex in other_exercises:
+        if order <= ex.order < workout_exercise.order:
+            ex.order += 1
+        elif order >= ex.order > workout_exercise.order:
+            ex.order -= 1
+
+        session.add(ex)
+
+    return session
+
+
+# This is used to increment order of later exercises when new exercise is added
+def increment_exercise_order(session, workout_id, order):
+    exercises_after = session.exec(
+        select(WorkoutExercise)
+        .where(WorkoutExercise.workout_id == workout_id)
+        .where(WorkoutExercise.order >= order)
+    ).all()
+
+    for ex in exercises_after:
+        ex.order += 1
+        session.add(ex)
+
+
+# This is used to decrement order of later exercises when exercise is deleted
+def decrement_exercise_order(session, workout_exercise):
+    exercises_after = session.exec(
+        select(WorkoutExercise)
+        .where(WorkoutExercise.id != workout_exercise.id)
+        .where(WorkoutExercise.workout_id == workout_exercise.workout_id)
+        .where(WorkoutExercise.order > workout_exercise.order)
+    ).all()
+
+    for ex in exercises_after:
+        ex.order -= 1
+        session.add(ex)
+
+
+# @app.post("/workout_exercises/", response_model=WorkoutExercise)
+# def create_workout_exercise(workout_exercise: WorkoutExercise):
+#     with Session(engine) as session:
+#         session.add(workout_exercise)
+#         session.commit()
+#         session.refresh(workout_exercise)
+#
+#         return workout_exercise
+
+
 @app.post("/workout_exercises/", response_model=WorkoutExercise)
-def create_workout_exercise(workout_exercise: WorkoutExercise):
+def create_workout_exercise(
+    workout_id: Annotated[int, Form()],
+    order: Annotated[int, Form()],
+    exercise_id: Annotated[int, Form()],
+    notes: Annotated[str, Form()] = "",
+):
+    workout_exercise = WorkoutExercise(
+        workout_id=workout_id,
+        order=order,
+        exercise_id=exercise_id,
+        notes=notes,
+    )
     with Session(engine) as session:
+        increment_exercise_order(session, workout_id, order)
         session.add(workout_exercise)
         session.commit()
         session.refresh(workout_exercise)
-        return workout_exercise
+
+    return RedirectResponse(
+        app.url_path_for("get_workout", workout_id=workout_id),
+        status_code=status.HTTP_303_SEE_OTHER,
+    )
 
 
 @app.get("/workout_exercises/", response_model=list[WorkoutExercise])
@@ -496,15 +569,17 @@ def update_workout_exercise(
     workout_exercise_id: int,
     order: Annotated[int, Form()],
     exercise_id: Annotated[int, Form()],
-    notes: Annotated[str, Form()],
+    notes: Annotated[str, Form()] = "",
 ):
     with Session(engine) as session:
         workout_exercise = session.exec(
             select(WorkoutExercise).where(WorkoutExercise.id == workout_exercise_id)
         ).one()
 
-        # TODO: Update order of all other exercises in workout
-        workout_exercise.order = order
+        if order != workout_exercise.order:
+            update_exercise_order(session, workout_exercise, order)
+            workout_exercise.order = order
+
         workout_exercise.exercise_id = exercise_id
         workout_exercise.notes = notes
         session.add(workout_exercise)
@@ -528,8 +603,8 @@ def delete_workout_exercise(workout_exercise_id: int):
             select(WorkoutExercise).where(WorkoutExercise.id == workout_exercise_id)
         ).first()
 
+        decrement_exercise_order(session, workout_exercise)
         workout_id = workout_exercise.workout_id
-        print(f"Deleting workout exercise {workout_id}")
         session.delete(workout_exercise)
         session.commit()
 
