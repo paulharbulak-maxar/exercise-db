@@ -60,7 +60,7 @@
     <form action="/template_exercises" method="post" enctype="multipart/form-data">
         <div class="flex flex-row justify-center">
             <div class="form-group gap-2 m-2 w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
-                <h2 class="flex place-content-center text-xl md:text-xl lg:text-xl font-bold leading-none tracking-tight text-gray-900 dark:text-white">
+                <h2 class="flex place-content-center mb-4 text-xl md:text-xl lg:text-xl font-bold leading-none tracking-tight text-gray-900 dark:text-white">
                     Add Exercise to Workout
                 </h2>
                 <input class="hidden" id="workout_template_id" name="workout_template_id" value={{ workout_template.id }}>
@@ -70,7 +70,9 @@
                         <option value={{exercise.id}}>{{ exercise.name }}</option>
                      {% endfor %}
                 </select>
-                <button id="create" type='submit' class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Create</button>
+                <button id="create" type='submit' class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    Add
+                </button>
             </div>
         </div>
     </form>
