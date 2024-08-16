@@ -1,15 +1,13 @@
 {% extends "base.html" %}
 {% block title %}Workout Log{% endblock %}
 {% block content %}
-    <h1 class="flex place-content-center m-4 text-xl md:text-2xl lg:text-3xl font-bold leading-none tracking-tight text-gray-900 dark:text-white"">
-        {{ workout.date }}
+    <h1 class="flex place-content-center my-4 text-xl md:text-2xl lg:text-3xl font-bold leading-none tracking-tight text-gray-900 dark:text-white"">
+        {{ workout.date.strftime('%Y-%m-%d') }}
     </h1>
+    <h2 class="flex place-content-center mb-4 text-sm md:text-base lg:text-lg font-bold leading-none tracking-tight text-gray-900 dark:text-white"">
+        {{ workout.template.label }}
+    </h2>
     <div class="flex flex-col">
-        <div class="flex place-content-center mb-4">
-            <a href="{{ url_for('get_workout_template', template_id=workout.template.id) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
-                {{ workout.template.program.name }}
-            </a>
-        </div>
         <form action="{{ url_for('update_workout', workout_id=workout.id) }}" method="post" enctype="multipart/form-data">
             <div class="flex justify-center gap-x-2">
                 <input type="date" id="date" name="date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
@@ -30,7 +28,7 @@
                         <th scope="col" class="px-6 py-3">Notes</th>
 <!--                        <th scope="col" class="px-6 py-3">Top Weight</th>-->
                         <th scope="col" class="px-6 py-3">
-                            <span class="sr-only">Edit</span>
+                            <span class="sr-only">View</span>
                         </th>
                         <th scope="col" class="px-6 py-3">
                             <span class="sr-only">Delete</span>
@@ -48,7 +46,7 @@
                     <td class="px-6 py-4">
                         <a href="{{ url_for('get_workout_exercise', workout_exercise_id=workout_exercise.id) }}"
                            class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
-                            Edit
+                            View
                         </a>
                     </td>
                     <td class="px-6 py-4">
@@ -68,12 +66,12 @@
     <form action="/workout_exercises" method="post" enctype="multipart/form-data">
         <div class="flex flex-row justify-center">
             <div class="flex flex-col form-group gap-2 m-2 w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
-                <h2 class="flex place-content-center my-4 text-xl md:text-xl lg:text-xl font-bold leading-none tracking-tight text-gray-900 dark:text-white">
+                <h2 class="flex place-content-center text-xl md:text-xl lg:text-xl font-bold leading-none tracking-tight text-gray-900 dark:text-white">
                     Add Exercise to Workout
                 </h2>
                 <input class="hidden" id="workout_id" name="workout_id" value={{ workout.id }}>
                 <label for="order" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Order</label>
-                <input type="number" id="order" name="order" max="10" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <input type="number" id="order" name="order" value={{ workout.exercises|length + 1 }} max="10" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                 <label for="exercise_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Exercises</label>
                 <select id="exercise_id" name="exercise_id" class="mb-4 shrink bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     {% for exercise in exercises %}
