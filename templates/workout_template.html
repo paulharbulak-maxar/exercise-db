@@ -27,15 +27,15 @@
                 {% if workout_template.exercises %}
                 {% for template_exercise in workout_template.exercises|sort(attribute='order') %}
                 <tr class="bg-white {{ 'border-b' if not loop.last }} dark:bg-gray-800 dark:border-gray-700">
-                    <td class="px-6 py-4">{{ template_exercise.order }}</td>
-                    <td class="px-6 py-4">{{ template_exercise.exercise.name }}</td>
-                    <td class="px-6 py-4">{{ template_exercise.exercise.primary_muscles.muscle_name.capitalize() }}</td>
+                    <td class="px-6 py-3">{{ template_exercise.order }}</td>
+                    <td class="px-6 py-3">{{ template_exercise.exercise.name }}</td>
+                    <td class="px-6 py-3">{{ template_exercise.exercise.primary_muscles.muscle_name.capitalize() }}</td>
                     {% if template_exercise.exercise.secondary_muscles %}
-                    <td class="px-6 py-4">{{ template_exercise.exercise.secondary_muscles.muscle_name.capitalize() }}</td>
+                    <td class="px-6 py-3">{{ template_exercise.exercise.secondary_muscles.muscle_name.capitalize() }}</td>
                     {% else %}
-                    <td class="px-6 py-4"></td>
+                    <td class="px-6 py-3"></td>
                     {% endif %}
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-3">
                     <form action="/template_exercises/{{ template_exercise.id }}/delete" method="post">
                         <button id="delete" type='submit' class="w-full text-white bg-gray-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-gray-600 dark:hover:bg-red-700 dark:focus:ring-gray-800">
                             Delete

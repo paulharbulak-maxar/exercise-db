@@ -222,6 +222,54 @@ def get_workout_template(request: Request, template_id: int):
 
 
 # Template Exercise
+# This is used to change order of other exercises when exercise order is updated
+def update_exercise_order(session, workout_exercise, order, foreign_key="workout_id"):
+    model = workout_exercise.__class__
+    other_exercises = session.exec(
+        select(model)
+        .where(getattr(model, "id") != workout_exercise.id)
+        .where(getattr(model, foreign_key) == getattr(workout_exercise, foreign_key))
+    ).all()
+
+    for ex in other_exercises:
+        if order <= ex.order < workout_exercise.order:
+            ex.order += 1
+        elif order >= ex.order > workout_exercise.order:
+            ex.order -= 1
+
+        session.add(ex)
+
+    return session
+
+
+# This is used to increment order of later exercises when new exercise is added
+def increment_exercise_order(session, model, workout_id, order):
+    exercises_after = session.exec(
+        select(model)
+        .where(getattr(model, "id") != workout_id)
+        .where(getattr(model, "order") >= order)
+    ).all()
+
+    for ex in exercises_after:
+        ex.order += 1
+        session.add(ex)
+
+
+# This is used to decrement order of later exercises when exercise is deleted
+def decrement_exercise_order(session, workout_exercise, foreign_key="workout_id"):
+    model = workout_exercise.__class__
+    exercises_after = session.exec(
+        select(model)
+        .where(getattr(model, "id") != workout_exercise.id)
+        .where(getattr(model, foreign_key) == getattr(workout_exercise, foreign_key))
+        .where(getattr(model, "order") > workout_exercise.order)
+    ).all()
+
+    for ex in exercises_after:
+        ex.order -= 1
+        session.add(ex)
+
+
 @app.post("/template_exercises/", response_model=TemplateExercise)
 def create_template_exercise(
     workout_template_id: Annotated[int, Form()],
@@ -260,8 +308,8 @@ def delete_template_exercise(template_exercise_id: int):
             select(TemplateExercise).where(TemplateExercise.id == template_exercise_id)
         ).first()
 
+        decrement_exercise_order(session, template_exercise, "workout_template_id")
         template_id = template_exercise.workout_template_id
-        print(f"Deleting template exercise {template_exercise_id}")
         session.delete(template_exercise)
         session.commit()
 
@@ -287,7 +335,12 @@ def update_template_exercise(
             select(TemplateExercise).where(TemplateExercise.id == template_exercise_id)
         ).one()
 
-        template_exercise.order = order
+        if order != template_exercise.order:
+            update_exercise_order(
+                session, template_exercise, order, "workout_template_id"
+            )
+            template_exercise.order = order
+
         session.add(template_exercise)
         session.commit()
         session.refresh(template_exercise)
@@ -445,52 +498,6 @@ def get_exercises():
 
 
 # WorkoutExercise
-# This is used to change order of other exercises when exercise order is updated
-def update_exercise_order(session, workout_exercise, order):
-    other_exercises = session.exec(
-        select(WorkoutExercise)
-        .where(WorkoutExercise.id != workout_exercise.id)
-        .where(WorkoutExercise.workout_id == workout_exercise.workout_id)
-    ).all()
-
-    for ex in other_exercises:
-        if order <= ex.order < workout_exercise.order:
-            ex.order += 1
-        elif order >= ex.order > workout_exercise.order:
-            ex.order -= 1
-
-        session.add(ex)
-
-    return session
-
-
-# This is used to increment order of later exercises when new exercise is added
-def increment_exercise_order(session, workout_id, order):
-    exercises_after = session.exec(
-        select(WorkoutExercise)
-        .where(WorkoutExercise.workout_id == workout_id)
-        .where(WorkoutExercise.order >= order)
-    ).all()
-
-    for ex in exercises_after:
-        ex.order += 1
-        session.add(ex)
-
-
-# This is used to decrement order of later exercises when exercise is deleted
-def decrement_exercise_order(session, workout_exercise):
-    exercises_after = session.exec(
-        select(WorkoutExercise)
-        .where(WorkoutExercise.id != workout_exercise.id)
-        .where(WorkoutExercise.workout_id == workout_exercise.workout_id)
-        .where(WorkoutExercise.order > workout_exercise.order)
-    ).all()
-
-    for ex in exercises_after:
-        ex.order -= 1
-        session.add(ex)
-
-
 # @app.post("/workout_exercises/", response_model=WorkoutExercise)
 # def create_workout_exercise(workout_exercise: WorkoutExercise):
 #     with Session(engine) as session:
@@ -515,7 +522,7 @@ def create_workout_exercise(
         notes=notes,
     )
     with Session(engine) as session:
-        increment_exercise_order(session, workout_id, order)
+        increment_exercise_order(session, WorkoutExercise, workout_id, order)
         session.add(workout_exercise)
         session.commit()
         session.refresh(workout_exercise)
@@ -606,7 +613,7 @@ def delete_workout_exercise(workout_exercise_id: int):
             select(WorkoutExercise).where(WorkoutExercise.id == workout_exercise_id)
         ).first()
 
-        decrement_exercise_order(session, workout_exercise)
+        decrement_exercise_order(session, workout_exercise, "workout_id")
         workout_id = workout_exercise.workout_id
         session.delete(workout_exercise)
         session.commit()
