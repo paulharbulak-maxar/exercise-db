@@ -385,8 +385,13 @@ def upgrade() -> None:
     workout_table = op.create_table(
         "workout",
         sa.Column("id", sa.INTEGER(), nullable=False),
+        sa.Column("program_id", sa.INTEGER(), nullable=False),
         sa.Column("template_id", sa.INTEGER(), nullable=True),
         sa.Column("date", sa.DATETIME(), nullable=False),
+        sa.ForeignKeyConstraint(
+            ["program_id"],
+            ["program.id"],
+        ),
         sa.ForeignKeyConstraint(
             ["template_id"],
             ["workout_template.id"],

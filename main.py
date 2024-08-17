@@ -104,7 +104,7 @@ def create_program(
     name: Annotated[str, Form()],
     program_type_id: Annotated[int, Form()],
     start_date: Annotated[str, Form()],
-    description: Annotated[str, Form()],
+    description: Annotated[str, Form()] = "",
 ):
     program = Program(
         name=name,
@@ -311,8 +311,10 @@ def update_template_exercise(
 
 # Workout
 @app.post("/workouts/", response_model=Workout)
-def create_workout(template_id: Annotated[str, Form()]):
-    workout = Workout(template_id=template_id, date=date.today())
+def create_workout(
+    program_id: Annotated[str, Form()], template_id: Annotated[str, Form()]
+):
+    workout = Workout(program_id=program_id, template_id=template_id, date=date.today())
     with Session(engine) as session:
         session.add(workout)
         session.commit()
@@ -322,6 +324,7 @@ def create_workout(template_id: Annotated[str, Form()]):
             select(WorkoutTemplate).where(WorkoutTemplate.id == template_id)
         ).one()
 
+        # TODO: Fix bug in workout exercise insert
         for exercise in workout_template.exercises:
             workout_exercise = WorkoutExercise(
                 order=exercise.order, workout_id=workout.id, exercise_id=exercise.id

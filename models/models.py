@@ -39,6 +39,10 @@ class Program(SQLModel, table=True):
         back_populates="program",
         sa_relationship_kwargs=dict(lazy="selectin"),
     )
+    workouts: list["Workout"] = Relationship(
+        back_populates="program",
+        sa_relationship_kwargs=dict(lazy="selectin"),
+    )
 
 
 class WorkoutTemplate(SQLModel, table=True):
@@ -56,10 +60,10 @@ class WorkoutTemplate(SQLModel, table=True):
         # back_populates="workout_template",
         sa_relationship_kwargs=dict(lazy="selectin"),
     )
-    workouts: list["Workout"] = Relationship(
-        back_populates="template",
-        sa_relationship_kwargs=dict(lazy="selectin"),
-    )
+    # workouts: list["Workout"] = Relationship(
+    #     back_populates="template",
+    #     sa_relationship_kwargs=dict(lazy="selectin"),
+    # )
 
 
 class TemplateExercise(SQLModel, table=True):
@@ -79,9 +83,14 @@ class TemplateExercise(SQLModel, table=True):
 
 class Workout(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
+    program_id: int | None = Field(default=None, foreign_key="program.id")
+    program: Optional["Program"] = Relationship(
+        back_populates="workouts",
+        sa_relationship_kwargs=dict(lazy="selectin"),
+    )
     template_id: int | None = Field(default=None, foreign_key="workout_template.id")
     template: Optional["WorkoutTemplate"] = Relationship(
-        back_populates="workouts",
+        # back_populates="workouts",
         sa_relationship_kwargs=dict(lazy="selectin"),
     )
     date: datetime
