@@ -77,8 +77,6 @@ class TemplateExercise(SQLModel, table=True):
     exercise: Optional["Exercise"] = Relationship(
         sa_relationship_kwargs=dict(lazy="selectin"),
     )
-    # TODO: Add workout order
-    # order: int | None
 
 
 class Workout(SQLModel, table=True):
