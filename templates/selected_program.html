@@ -11,6 +11,7 @@
     </h2>
     <div class="flex place-content-center">
         <div class="shrink overflow-auto max-h-64 m-4 shadow-md sm:rounded-lg">
+<!--            TODO: Add lines between rows-->
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
@@ -42,24 +43,38 @@
     <h2 class="flex place-content-center text-xl md:text-xl lg:text-xl font-bold leading-none tracking-tight text-gray-900 dark:text-white">
         Templates
     </h2>
-    <div class="flex flex-row justify-center relative overflow-x-auto m-4 gap-4">
+    <div class="flex justify-around">
+        <div class="grid grid-cols-2 lg:grid-cols-4 m-4 gap-4">
         {% for workout_template in workout_templates %}
-        <div class="flex flex-col grow max-w-64">
-<!--            TODO: Remove hyperlink on click-->
-            <a href="{{ url_for('get_workout_template', template_id=workout_template.id) }}"
-               class="grow block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                <h2 class="mb-2 text-md md:text-lg lg:text-xl text-gray-200 font-bold">
-                    {{ get_weekday(workout_template.day_of_week) }} - {{ workout_template.label }}
-                </h2>
-                <ul class="text-sm font-medium text-gray-900 dark:text-white">
-                {% for template_exercise in workout_template.exercises %}
-                    <li class="py-2">{{ template_exercise.exercise.name }}</li>
-                {% endfor %}
-                </ul>
-            </a>
-<!--            TODO: Add button for logging workout, button for editing template -->
-        </div>
+            <div class="flex flex-col max-w-64 p-4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                <div>
+                    <h2 class="mb-2 text-sm underline font-bold text-gray-900 dark:text-gray-200">
+                        {{ get_weekday(workout_template.day_of_week) }} - {{ workout_template.label }}
+                    </h2>
+                    <ul class="mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                    {% for template_exercise in workout_template.exercises %}
+                        <li class="py-2">{{ template_exercise.exercise.name }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                <div class="grow content-end">
+                    <div class="flex flex-row justify-center gap-4">
+                        <form action="{{ url_for('get_workout_template', template_id=workout_template.id) }}" method="get">
+                            <button id="view_template" type='submit' class="w-full text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 font-normal antialiased rounded-lg text-xs px-5 py-2.5 text-center dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800">
+                                Edit
+                            </button>
+                        </form>
+                        <form action="/workouts" method="post">
+                            <input class="hidden" id="template_id" name="template_id" value={{ workout_template.id }}>
+                            <button id="log_workout" type='submit' class="w-full text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 font-normal antialiased rounded-lg text-xs px-5 py-2.5 text-center dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800">
+                                Log Workout
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         {% endfor %}
+    </div>
     </div>
     <form action="/workout_templates" method="post" enctype="multipart/form-data">
         <div class="flex flex-row justify-center my-4">
@@ -94,5 +109,4 @@
             </div>
         </div>
     </form>
-<!--    TODO: Add table for workout log-->
 {% endblock %}
