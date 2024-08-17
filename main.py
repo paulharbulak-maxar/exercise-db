@@ -377,10 +377,11 @@ def create_workout(
             select(WorkoutTemplate).where(WorkoutTemplate.id == template_id)
         ).one()
 
-        # TODO: Fix bug in workout exercise insert
-        for exercise in workout_template.exercises:
+        for template_ex in workout_template.exercises:
             workout_exercise = WorkoutExercise(
-                order=exercise.order, workout_id=workout.id, exercise_id=exercise.id
+                order=template_ex.order,
+                workout_id=workout.id,
+                exercise_id=template_ex.exercise.id,
             )
             session.add(workout_exercise)
 
