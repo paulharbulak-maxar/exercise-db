@@ -11,6 +11,7 @@ from starlette.responses import RedirectResponse
 from initialize_db import insert_records
 from models.models import (
     Exercise,
+    ExerciseSet,
     Muscle,
     MuscleGroup,
     Program,
@@ -19,7 +20,6 @@ from models.models import (
     User,
     Workout,
     WorkoutExercise,
-    WorkoutSet,
     WorkoutTemplate,
 )
 
@@ -155,10 +155,10 @@ def get_program(request: Request, program_id: int):
 
 # Workout Template
 # Form for selecting n number of exercises for each workout
-@app.post("/workout_templates/", response_model=WorkoutTemplate)
+@app.post("/programs/{program_id}/workout_templates/", response_model=WorkoutTemplate)
 # def create_workout_template(workout_template: WorkoutTemplate):
 def create_workout_template(
-    program_id: Annotated[int, Form()],
+    program_id: int,
     day_of_week: Annotated[int, Form()],
     label: Annotated[str, Form()],
 ):
@@ -184,7 +184,6 @@ def create_workout_template(
 @app.post("/workout_templates/{template_id}/update", response_model=WorkoutTemplate)
 def update_workout_template(
     template_id: int,
-    program_id: Annotated[int, Form()],
     day_of_week: Annotated[int, Form()],
     label: Annotated[str, Form()],
 ):
@@ -193,7 +192,6 @@ def update_workout_template(
             select(WorkoutTemplate).where(WorkoutTemplate.id == template_id)
         ).one()
 
-        workout_template.program_id = program_id
         workout_template.day_of_week = day_of_week
         workout_template.label = label
         session.add(workout_template)
@@ -219,6 +217,9 @@ def get_workout_template(request: Request, template_id: int):
             name="workout_template.html",
             context={"workout_template": workout_template, "exercises": exercises},
         )
+
+
+# TODO: Create get_workout_templates for path "/programs/{program_id}/workout_templates"
 
 
 # Template Exercise
@@ -270,9 +271,13 @@ def decrement_exercise_order(session, workout_exercise, foreign_key="workout_id"
         session.add(ex)
 
 
-@app.post("/template_exercises/", response_model=TemplateExercise)
+# TODO: Add workout_template_id to path
+@app.post(
+    "/workout_templates/{workout_template_id}/template_exercises/",
+    response_model=TemplateExercise,
+)
 def create_template_exercise(
-    workout_template_id: Annotated[int, Form()],
+    workout_template_id: int,
     exercise_id: Annotated[int, Form()],
 ):
     with Session(engine) as session:
@@ -354,7 +359,6 @@ def update_template_exercise(
         )
 
 
-# TODO: Create workouts
 # Creating workouts (selecting exercises, entering sets--weight and reps),
 # viewing all workouts in program (e.g. - both calendar and list), viewing and
 # updating selected workouts
@@ -363,9 +367,10 @@ def update_template_exercise(
 
 
 # Workout
-@app.post("/workouts/", response_model=Workout)
+@app.post("/workout_templates/{template_id}/workouts/", response_model=Workout)
 def create_workout(
-    program_id: Annotated[str, Form()], template_id: Annotated[str, Form()]
+    template_id: int,
+    program_id: Annotated[str, Form()],
 ):
     workout = Workout(program_id=program_id, template_id=template_id, date=date.today())
     with Session(engine) as session:
@@ -509,9 +514,9 @@ def get_exercises():
 #         return workout_exercise
 
 
-@app.post("/workout_exercises/", response_model=WorkoutExercise)
+@app.post("/workouts/{workout_id}/workout_exercises/", response_model=WorkoutExercise)
 def create_workout_exercise(
-    workout_id: Annotated[int, Form()],
+    workout_id: int,
     order: Annotated[int, Form()],
     exercise_id: Annotated[int, Form()],
     notes: Annotated[str, Form()] = "",
@@ -534,14 +539,15 @@ def create_workout_exercise(
     )
 
 
-@app.get("/workout_exercises/", response_model=list[WorkoutExercise])
+@app.get(
+    "/workouts/{workout_id}/workout_exercises/", response_model=list[WorkoutExercise]
+)
 def get_workout_exercises(workout_id: int = None):
     with Session(engine) as session:
-        # TODO: Add query param for workout_id
-        # workout_exercises = session.exec(select(WorkoutExercise).where(
-        #     WorkoutExercise.workout_id == workout_id)
-        # ).all()
-        workout_exercises = session.exec(select(WorkoutExercise)).all()
+        workout_exercises = session.exec(
+            select(WorkoutExercise).where(WorkoutExercise.workout_id == workout_id)
+        ).all()
+
         return workout_exercises
 
 
@@ -629,21 +635,60 @@ def delete_workout_exercise(workout_exercise_id: int):
 
 
 # WorkoutSet
-@app.post("/workout_sets/", response_model=WorkoutSet)
-def create_user(workout_set: WorkoutSet):
+@app.post(
+    "/workout_exercises/{workout_exercise_id}/exercise_sets/",
+    response_model=WorkoutExercise,
+)
+def create_exercise_set(
+    workout_exercise_id: int,
+    set_number: Annotated[int, Form()],
+    weight: Annotated[int, Form()],
+    reps: Annotated[int, Form()],
+):
+    exercise_set = ExerciseSet(
+        workout_exercise_id=workout_exercise_id,
+        set_number=set_number,
+        weight=weight,
+        reps=reps,
+    )
     with Session(engine) as session:
-        session.add(workout_set)
+        session.add(exercise_set)
         session.commit()
-        session.refresh(workout_set)
-        return workout_set
+        session.refresh(exercise_set)
+
+    return RedirectResponse(
+        app.url_path_for(
+            "get_workout_exercise", workout_exercise_id=workout_exercise_id
+        ),
+        status_code=status.HTTP_303_SEE_OTHER,
+    )
 
 
-@app.get("/workout_sets/", response_model=list[WorkoutSet])
-def get_users():
+@app.get(
+    "/workout_exercises/{workout_exercise_id}/exercise_sets/",
+    response_model=list[ExerciseSet],
+)
+def get_exercise_sets(workout_exercise_id: int):
     with Session(engine) as session:
-        workout_sets = session.exec(select(WorkoutSet)).all()
-        return workout_sets
+        exercise_sets = session.exec(
+            select(ExerciseSet).where(
+                ExerciseSet.workout_exercise_id == workout_exercise_id
+            )
+        ).all()
+
+        return exercise_sets
+
+
+@app.post("/exercise_sets/{exercise_set_id}", response_model=ExerciseSet)
+def get_exercise_set(exercise_set_id: int):
+    with Session(engine) as session:
+        exercise_sets = session.exec(
+            select(ExerciseSet).where(ExerciseSet.id == exercise_set_id)
+        ).all()
+
+        return exercise_sets
 
 
 if __name__ == "__main__":
+
     uvicorn.run(app, host="127.0.0.1", port=8000)

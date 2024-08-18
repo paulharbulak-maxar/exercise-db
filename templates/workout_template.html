@@ -4,13 +4,13 @@
     <h1 class="flex place-content-center m-4 text-xl md:text-2xl lg:text-3xl font-bold leading-none tracking-tight text-gray-900 dark:text-white"">
         {{ get_weekday(workout_template.day_of_week) }} - {{ workout_template.label }}
     </h1>
-    <div class="flex place-content-center mb-4">
+    <div class="flex place-content-center mb-2">
         <a href="{{ url_for('get_program', program_id=workout_template.program_id) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
             {{ workout_template.program.name }}
         </a>
     </div>
     <div class="flex place-content-center">
-        <div class="shrink overflow-x-auto m-4 shadow-md sm:rounded-lg">
+        <div class="shrink overflow-x-auto mb-4 shadow-md sm:rounded-lg">
             <table class="text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
@@ -49,13 +49,12 @@
             </table>
         </div>
     </div>
-    <form action="/template_exercises" method="post" enctype="multipart/form-data">
+    <form action="{{ url_for('create_template_exercise', workout_template_id=workout_template.id) }}" method="post" enctype="multipart/form-data">
         <div class="flex flex-row justify-center">
-            <div class="form-group gap-2 m-2 w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
+            <div class="form-group gap-2 mb-4 w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
                 <h2 class="flex place-content-center mb-4 text-xl md:text-xl lg:text-xl font-bold leading-none tracking-tight text-gray-900 dark:text-white">
                     Add Exercise to Workout
                 </h2>
-                <input class="hidden" id="workout_template_id" name="workout_template_id" value={{ workout_template.id }}>
                 <label for="exercise_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Exercises</label>
                 <select id="exercise_id" name="exercise_id" class="mb-4 shrink bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     {% for exercise in exercises %}

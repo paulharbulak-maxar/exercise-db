@@ -17,6 +17,7 @@ from sqlmodel import Session
 from alembic import context, op
 from models.models import (
     Exercise,
+    ExerciseSet,
     Muscle,
     MuscleGroup,
     Program,
@@ -25,7 +26,6 @@ from models.models import (
     User,
     Workout,
     WorkoutExercise,
-    WorkoutSet,
     WorkoutTemplate,
 )
 
@@ -619,7 +619,7 @@ def upgrade() -> None:
     )
 
     workout_set_table = op.create_table(
-        "workout_set",
+        "exercise_set",
         sa.Column("id", sa.INTEGER(), nullable=False),
         sa.Column("workout_exercise_id", sa.INTEGER(), nullable=True),
         sa.Column("set_number", sa.INTEGER(), nullable=False),
@@ -657,7 +657,7 @@ def upgrade() -> None:
 def downgrade() -> None:
     op.drop_table("emg_activation")
     op.drop_table("workout_exercise")
-    op.drop_table("workout_set")
+    op.drop_table("exercise_set")
     op.drop_table("workout")
     op.drop_table("program_exercise")
     op.drop_table("program_workout")

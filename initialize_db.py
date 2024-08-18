@@ -5,13 +5,13 @@ from sqlmodel import Session, select
 
 from models.models import (
     Exercise,
+    ExerciseSet,
     Muscle,
     MuscleGroup,
     Program,
     User,
     Workout,
     WorkoutExercise,
-    WorkoutSet,
 )
 
 

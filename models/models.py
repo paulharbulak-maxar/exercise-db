@@ -81,6 +81,7 @@ class TemplateExercise(SQLModel, table=True):
 
 class Workout(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
+    # TODO: Figure out how to create relationship thru another relationship (program -> template -> workout)
     program_id: int | None = Field(default=None, foreign_key="program.id")
     program: Optional["Program"] = Relationship(
         back_populates="workouts",
@@ -176,17 +177,21 @@ class WorkoutExercise(SQLModel, table=True):
         sa_relationship_kwargs=dict(lazy="selectin"),
     )
     notes: str | None
-    sets: list["WorkoutSet"] = Relationship(
-        # back_populates="muscle_group",
+    sets: list["ExerciseSet"] = Relationship(
+        back_populates="workout_exercise",
         sa_relationship_kwargs=dict(lazy="selectin"),
     )
 
 
-class WorkoutSet(SQLModel, table=True):
-    __tablename__ = "workout_set"
+class ExerciseSet(SQLModel, table=True):
+    __tablename__ = "exercise_set"
     id: int | None = Field(default=None, primary_key=True)
     workout_exercise_id: int | None = Field(
         default=None, foreign_key="workout_exercise.id"
+    )
+    workout_exercise: list["WorkoutExercise"] = Relationship(
+        back_populates="sets",
+        sa_relationship_kwargs=dict(lazy="selectin"),
     )
     set_number: int
     weight: int
