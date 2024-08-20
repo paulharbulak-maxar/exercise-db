@@ -8,7 +8,7 @@
     <p class="flex place-content-center text-sm text-gray-300">Type: {{ program.program_type.name }}</p>
     <div class="flex justify-around">
 <!--        TODO: Auto grid instead of specifying cols-->
-        <div class="grid grid-cols-2 lg:grid-cols-4 m-4 gap-4">
+        <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-flow-col lg:auto-cols-fr m-4 gap-4">
         {% for workout_template in workout_templates %}
             <div class="flex flex-col max-w-64 p-4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                 <div>
