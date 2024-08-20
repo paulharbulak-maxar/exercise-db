@@ -7,7 +7,6 @@
     <p class="flex place-content-center text-sm text-gray-300">Start Date: {{ program.start_date.strftime('%Y-%m-%d') }}</p>
     <p class="flex place-content-center text-sm text-gray-300">Type: {{ program.program_type.name }}</p>
     <div class="flex justify-around">
-<!--        TODO: Auto grid instead of specifying cols-->
         <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-flow-col lg:auto-cols-fr m-4 gap-4">
         {% for workout_template in workout_templates %}
             <div class="flex flex-col max-w-64 p-4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
@@ -86,6 +85,7 @@
                     <tr>
                         <th scope="col" class="px-6 py-3">Date</th>
                         <th scope="col" class="px-6 py-3">Label</th>
+                        <th scope="col" class="px-6 py-3">Exercises</th>
                         <th scope="col" class="px-6 py-3">Duration</th>
                         <th scope="col" class="px-6 py-3">
                             <span class="sr-only">View</span>
@@ -93,11 +93,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                <!--            TODO: Fix lines between rows-->
                 {% for workout in program.workouts|sort(attribute='date') %}
                 <tr class="bg-white {{ 'border-b' if not loop.last }} odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 dark:border-gray-700">
                     <td class="px-6 py-4">{{ workout.date.strftime('%Y-%m-%d') }}</td>
                     <td class="px-6 py-4">{{ workout.template.label }}</td>
+                    <td class="px-6 py-4">{{ workout.exercises|length }}</td>
                     <td class="px-6 py-4">0</td>
                     <td class="px-6 py-4">
                         <a href="{{ url_for('get_workout', workout_id=workout.id) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">View</a>

@@ -5,7 +5,9 @@
         {{ workout_exercise.exercise.name }}
     </h1>
     <h2 class="flex place-content-center mb-4 text-sm md:text-base lg:text-lg font-bold leading-none tracking-tight text-gray-900 dark:text-white"">
-        {{  workout_exercise.workout.date.strftime('%Y-%m-%d') }}
+        <a href="{{ url_for('get_workout', workout_id=workout_exercise.workout.id) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+            {{ workout_exercise.workout.date.strftime('%Y-%m-%d') }}
+        </a>
     </h2>
     <div class="grid grid-cols-1 md:grid-cols-3 m-4 gap-4 place-content-center">
         <form action="{{ url_for('create_exercise_set', workout_exercise_id=workout_exercise.id) }}" method="post" enctype="multipart/form-data">
