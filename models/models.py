@@ -93,6 +93,7 @@ class Workout(SQLModel, table=True):
         sa_relationship_kwargs=dict(lazy="selectin"),
     )
     date: datetime
+    duration: int | None
     exercises: list["WorkoutExercise"] = Relationship(
         back_populates="workout",
         sa_relationship_kwargs=dict(lazy="selectin"),

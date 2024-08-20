@@ -501,7 +501,7 @@ def upgrade() -> None:
         "muscle",
         sa.Column("id", sa.INTEGER(), nullable=False),
         sa.Column("muscle_name", sa.VARCHAR(), nullable=False),
-        sa.Column("muscle_group_id", sa.INTEGER(), nullable=True),
+        sa.Column("muscle_group_id", sa.INTEGER(), nullable=False),
         sa.ForeignKeyConstraint(
             ["muscle_group_id"],
             ["muscle_group.id"],
@@ -513,7 +513,7 @@ def upgrade() -> None:
         "exercise",
         sa.Column("id", sa.INTEGER(), nullable=False),
         sa.Column("name", sa.VARCHAR(), nullable=False),
-        sa.Column("muscle_primary", sa.INTEGER(), nullable=True),
+        sa.Column("muscle_primary", sa.INTEGER(), nullable=False),
         sa.Column("muscle_secondary", sa.INTEGER(), nullable=True),
         sa.Column("is_compound", sa.BOOLEAN(), nullable=False),
         sa.ForeignKeyConstraint(
@@ -540,7 +540,7 @@ def upgrade() -> None:
         sa.Column("name", sa.VARCHAR(), nullable=False),
         # sa.Column("user_id", sa.INTEGER(), nullable=True),
         sa.Column("program_type_id", sa.INTEGER(), nullable=False),
-        sa.Column("start_date", sa.DATETIME(), nullable=False),
+        sa.Column("start_date", sa.DATETIME(), nullable=True),
         sa.Column("description", sa.VARCHAR(), nullable=True),
         # sa.ForeignKeyConstraint(
         #     ["user_id"],
@@ -587,8 +587,9 @@ def upgrade() -> None:
         "workout",
         sa.Column("id", sa.INTEGER(), nullable=False),
         sa.Column("program_id", sa.INTEGER(), nullable=False),
-        sa.Column("template_id", sa.INTEGER(), nullable=True),
+        sa.Column("template_id", sa.INTEGER(), nullable=False),
         sa.Column("date", sa.DATETIME(), nullable=False),
+        sa.Column("duration", sa.INTEGER(), nullable=True),
         sa.ForeignKeyConstraint(
             ["program_id"],
             ["program.id"],
@@ -621,7 +622,7 @@ def upgrade() -> None:
     workout_set_table = op.create_table(
         "exercise_set",
         sa.Column("id", sa.INTEGER(), nullable=False),
-        sa.Column("workout_exercise_id", sa.INTEGER(), nullable=True),
+        sa.Column("workout_exercise_id", sa.INTEGER(), nullable=False),
         sa.Column("set_number", sa.INTEGER(), nullable=False),
         sa.Column("weight", sa.INTEGER(), nullable=False),
         sa.Column("reps", sa.INTEGER(), nullable=False),
@@ -635,8 +636,8 @@ def upgrade() -> None:
     emg_activation_table = op.create_table(
         "emg_activation",
         sa.Column("id", sa.INTEGER(), nullable=False),
-        sa.Column("muscle_id", sa.INTEGER(), nullable=True),
-        sa.Column("exercise_id", sa.INTEGER(), nullable=True),
+        sa.Column("muscle_id", sa.INTEGER(), nullable=False),
+        sa.Column("exercise_id", sa.INTEGER(), nullable=False),
         sa.Column("activation", sa.INTEGER(), nullable=False),
         sa.ForeignKeyConstraint(
             ["exercise_id"],

@@ -412,12 +412,17 @@ def create_workout(
 # @app.put("/workouts/{workout_id}", response_model=Workout)
 @app.post("/workouts/{workout_id}/update", response_model=Workout)
 # def update_workout(date: str, workout_id: int):
-def update_workout(workout_id: int, date: Annotated[str, Form()]):
+def update_workout(
+    workout_id: int,
+    date: Annotated[str, Form()],
+    duration: Annotated[int, Form()],
+):
     with Session(engine) as session:
         workout = session.exec(select(Workout).where(Workout.id == workout_id)).one()
         # workout.template_id = workout.template_id
         date_obj = datetime.strptime(date, "%Y-%m-%d")
         workout.date = date_obj
+        workout.duration = duration
         session.add(workout)
         session.commit()
         session.refresh(workout)
