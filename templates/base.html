@@ -3,9 +3,14 @@
 <head>
     {% block head %}
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans:wdth,wght@87.5,100..900&family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
     <title>{% block title %}{% endblock %}</title>
-    <nav class="bg-white dark:bg-gray-700 p-2">
+    <nav class="bebas-neue-regular bg-white dark:bg-gray-700 p-2">
         <ul class="font-sm flex flex-row justify-end">
+            <li class="text-gray-900 mx-3">Programmer</li>
             <li class="mx-3">
                 <a href="{{ url_for('get_programs') }}" class="text-gray-900 hover:text-blue-700 dark:text-white">Programs</a>
             </li>
@@ -16,7 +21,7 @@
     </nav>
     {% endblock %}
 </head>
-<body class="dark:bg-gray-900">
+<body class="noto-sans-regular dark:bg-gray-900">
     <div id="content">{% block content %}{% endblock %}</div>
     <div id="footer">
         {% block footer %}

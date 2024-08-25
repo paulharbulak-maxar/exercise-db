@@ -4,17 +4,17 @@
     <h1 class="flex place-content-center m-4 text-xl md:text-2xl lg:text-3xl font-bold leading-none tracking-tight text-gray-900 dark:text-white">
         {{ program.name }}
     </h1>
-    <p class="flex place-content-center text-sm text-gray-300">Start Date: {{ program.start_date.strftime('%Y-%m-%d') }}</p>
-    <p class="flex place-content-center text-sm text-gray-300">Type: {{ program.program_type.name }}</p>
+    <p class="flex place-content-center text-gray-300">Start Date: {{ program.start_date.strftime('%Y-%m-%d') }}</p>
+    <p class="flex place-content-center text-gray-300">Type: {{ program.program_type.name }}</p>
     <div class="flex justify-around">
         <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-flow-col lg:auto-cols-fr m-4 gap-4">
         {% for workout_template in workout_templates %}
             <div class="flex flex-col max-w-64 p-4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                 <div>
-                    <h2 class="mb-2 text-sm underline font-bold text-gray-900 dark:text-gray-200">
+                    <h2 class="mb-2 text-lg underline text-gray-900 dark:text-gray-200">
                         {{ get_weekday(workout_template.day_of_week) }} - {{ workout_template.label }}
                     </h2>
-                    <ul class="mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                    <ul class="mb-2 text-sm font-light text-gray-900 dark:text-gray-200">
                     {% for template_exercise in workout_template.exercises %}
                         <li class="py-2">{{ template_exercise.exercise.name }}</li>
                     {% endfor %}

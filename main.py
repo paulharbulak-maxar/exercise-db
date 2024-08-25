@@ -7,6 +7,7 @@ from fastapi.templating import Jinja2Templates
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 from starlette import status
 from starlette.responses import RedirectResponse
+from starlette.staticfiles import StaticFiles
 
 from initialize_db import insert_records
 from models.models import (
@@ -57,7 +58,7 @@ def create_db_and_tables():
 
 
 app = FastAPI()
-
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # @app.on_event("startup")
 # def on_startup():
