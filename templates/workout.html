@@ -36,6 +36,7 @@
                         <th scope="col" class="px-6 py-3">Order</th>
                         <th scope="col" class="px-6 py-3">Exercise</th>
                         <th scope="col" class="px-6 py-3">Sets</th>
+                        <th scope="col" class="px-6 py-3">Top Set</th>
                         <th scope="col" class="px-6 py-3">Notes</th>
 <!--                        <th scope="col" class="px-6 py-3">Top Weight</th>-->
                         <th scope="col" class="px-6 py-3">
@@ -53,6 +54,14 @@
                     <td class="px-6 py-3">{{ workout_exercise.order }}</td>
                     <td class="px-6 py-3">{{ workout_exercise.exercise.name }}</td>
                     <td class="px-6 py-3">{{ workout_exercise.sets|length }}</td>
+                    {% if workout_exercise.sets|length > 0 %}
+                    {% set top_set = (workout_exercise.sets|sort(attribute='weight', reverse=True)|first) %}
+                    <td class="px-6 py-3">{{ top_set.weight }}x{{ top_set.reps }}</td>
+                    {% else %}
+                     <td class="px-6 py-3">N/A</td>
+                    {% endif %}
+<!--                    <td class="px-6 py-3">{{ workout_exercise.sets|sort(attribute='weight', reverse=True)|first }}</td>-->
+<!--                    <td class="px-6 py-3">{{ workout_exercise.sets|map(attribute="weight")|max }}</td>-->
                     <td class="px-6 py-3">{{ workout_exercise.notes }}</td>
                     <td class="px-6 py-3">
                         <a href="{{ url_for('get_workout_exercise', workout_exercise_id=workout_exercise.id) }}"
