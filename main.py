@@ -9,20 +9,19 @@ from starlette import status
 from starlette.responses import RedirectResponse
 from starlette.staticfiles import StaticFiles
 
-from initialize_db import insert_records
-from models.models import (
-    Exercise,
-    ExerciseSet,
-    Muscle,
-    MuscleGroup,
-    Program,
-    ProgramType,
-    TemplateExercise,
-    User,
-    Workout,
-    WorkoutExercise,
-    WorkoutTemplate,
-)
+# from initialize_db import insert_records
+from models.emg_activation import EmgActivation
+from models.exercise import Exercise
+from models.exercise_set import ExerciseSet
+from models.muscle import Muscle
+from models.muscle_group import MuscleGroup
+from models.program import Program
+from models.program_type import ProgramType
+from models.template_exercise import TemplateExercise
+from models.user import User
+from models.workout import Workout
+from models.workout_exercise import WorkoutExercise
+from models.workout_template import WorkoutTemplate
 
 sqlite_file_name = "exercise.db"
 sqlite_url = f"sqlite:///{sqlite_file_name}"
@@ -52,9 +51,9 @@ def get_weekday(d):
 templates.env.globals["get_weekday"] = get_weekday
 
 
-def create_db_and_tables():
-    SQLModel.metadata.create_all(engine)
-    insert_records(engine)
+# def create_db_and_tables():
+#     SQLModel.metadata.create_all(engine)
+#     insert_records(engine)
 
 
 app = FastAPI()
