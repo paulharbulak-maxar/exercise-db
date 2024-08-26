@@ -98,7 +98,11 @@
                     <td class="px-6 py-4">{{ workout.date.strftime('%Y-%m-%d') }}</td>
                     <td class="px-6 py-4">{{ workout.template.label }}</td>
                     <td class="px-6 py-4">{{ workout.exercises|length }}</td>
+                    {% if workout.duration %}
                     <td class="px-6 py-4">{{ (workout.duration // 60)|string + 'h' if workout.duration // 60 != 0 }} {{ (workout.duration % 60)|string + 'm' if workout.duration % 60 != 0 }} </td>
+                    {% else %}
+                    <td class="px-6 py-4">N/A</td>
+                    {% endif %}
                     <td class="px-6 py-4">
                         <a href="{{ url_for('get_workout', workout_id=workout.id) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">View</a>
                     </td>

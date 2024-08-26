@@ -16,6 +16,9 @@
                     <th scope="col" class="px-6 py-3">
                         <span class="sr-only">Edit</span>
                     </th>
+                    <th scope="col" class="px-6 py-3">
+                        <span class="sr-only">Delete</span>
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -30,6 +33,8 @@
                         View
                     </a>
                 </td>
+<!--                TODO: Add button to delete program-->
+                <td class="px-6 py-4">Delete</td>
             </tr>
             {% endfor %}
             </tbody>
@@ -61,8 +66,10 @@
         </div>
         <div class="max-w-48">
             <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description:</label>
-            <textarea type="text" id="description" name="description" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-            </textarea>
+            <textarea type="text"
+                      id="description"
+                      name="description"
+                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
         </div>
     </div>
     </div>
