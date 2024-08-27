@@ -26,7 +26,7 @@ def delete_template_exercise(template_exercise_id: int):
     with Session(engine) as session:
         template_exercise = session.exec(
             select(TemplateExercise).where(TemplateExercise.id == template_exercise_id)
-        ).first()
+        ).one()
 
         decrement_exercise_order(session, template_exercise, "workout_template_id")
         template_id = template_exercise.workout_template_id

@@ -77,7 +77,19 @@ def get_program(request: Request, program_id: int):
         )
 
 
-# TODO: Add delete_program
+# @router.delete("/program_id/{workout_exercise_id}")
+@router.post("/{program_id}/delete", response_model=Program)
+def delete_program(program_id: int):
+    with Session(engine) as session:
+        program = session.exec(select(Program).where(Program.id == program_id)).one()
+
+        session.delete(program)
+        session.commit()
+
+        return RedirectResponse(
+            router.url_path_for("get_programs"),
+            status_code=status.HTTP_303_SEE_OTHER,
+        )
 
 
 # Workout Template

@@ -79,7 +79,7 @@ def delete_workout_exercise(workout_exercise_id: int):
     with Session(engine) as session:
         workout_exercise = session.exec(
             select(WorkoutExercise).where(WorkoutExercise.id == workout_exercise_id)
-        ).first()
+        ).one()
 
         decrement_exercise_order(session, workout_exercise, "workout_id")
         workout_id = workout_exercise.workout_id
