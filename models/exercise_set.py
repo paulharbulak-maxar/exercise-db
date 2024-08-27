@@ -10,7 +10,7 @@ class ExerciseSet(SQLModel, table=True):
     __tablename__ = "exercise_set"
     id: int | None = Field(default=None, primary_key=True)
     workout_exercise_id: int | None = Field(
-        default=None, foreign_key="workout_exercise.id"
+        default=None, foreign_key="workout_exercise.id", ondelete="CASCADE"
     )
     workout_exercise: list["WorkoutExercise"] = Relationship(
         back_populates="sets",

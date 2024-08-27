@@ -22,9 +22,17 @@ class Program(SQLModel, table=True):
     description: Optional[str]
     workout_templates: list["WorkoutTemplate"] = Relationship(
         back_populates="program",
-        sa_relationship_kwargs=dict(lazy="selectin"),
+        sa_relationship_kwargs=dict(
+            lazy="selectin",
+            cascade="all, delete",
+            passive_deletes=True,
+        ),
     )
     workouts: list["Workout"] = Relationship(
         back_populates="program",
-        sa_relationship_kwargs=dict(lazy="selectin"),
+        sa_relationship_kwargs=dict(
+            lazy="selectin",
+            cascade="all, delete",
+            passive_deletes=True,
+        ),
     )

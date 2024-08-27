@@ -2,7 +2,6 @@ import uvicorn
 from fastapi import FastAPI
 from starlette.staticfiles import StaticFiles
 
-# from initialize_db import insert_records
 from routers import (
     exercise_sets,
     exercises,
@@ -17,11 +16,6 @@ from routers import (
     workouts,
 )
 
-# def create_db_and_tables():
-#     SQLModel.metadata.create_all(engine)
-#     insert_records(engine)
-
-
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(exercise_sets.router)
@@ -35,11 +29,6 @@ app.include_router(users.router)
 app.include_router(workout_exercises.router)
 app.include_router(workout_templates.router)
 app.include_router(workouts.router)
-
-
-# @app.on_event("startup")
-# def on_startup():
-#     create_db_and_tables()
 
 
 if __name__ == "__main__":

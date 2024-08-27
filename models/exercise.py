@@ -1,10 +1,9 @@
-from typing import TYPE_CHECKING, Optional
+from typing import Optional
 
 from sqlmodel import Field, Relationship, SQLModel
 
-if TYPE_CHECKING:
-    from models.emg_activation import EmgActivation
-    from models.muscle import Muscle
+from models.emg_activation import EmgActivation
+from models.muscle import Muscle
 
 
 class Exercise(SQLModel, table=True):
@@ -26,6 +25,6 @@ class Exercise(SQLModel, table=True):
         ),
     )
     emg_activation: Optional["EmgActivation"] = Relationship(
-        # back_populates="muscle",
+        # back_populates="exercise",
         sa_relationship_kwargs=dict(lazy="selectin"),
     )

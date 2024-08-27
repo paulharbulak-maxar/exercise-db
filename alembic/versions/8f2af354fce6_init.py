@@ -15,19 +15,17 @@ import sqlmodel
 from sqlmodel import Session
 
 from alembic import context, op
-from models.models import (
-    Exercise,
-    ExerciseSet,
-    Muscle,
-    MuscleGroup,
-    Program,
-    ProgramType,
-    TemplateExercise,
-    User,
-    Workout,
-    WorkoutExercise,
-    WorkoutTemplate,
-)
+from models.exercise import Exercise
+from models.exercise_set import ExerciseSet
+from models.muscle import Muscle
+from models.muscle_group import MuscleGroup
+from models.program import Program
+from models.program_type import ProgramType
+from models.template_exercise import TemplateExercise
+from models.user import User
+from models.workout import Workout
+from models.workout_exercise import WorkoutExercise
+from models.workout_template import WorkoutTemplate
 
 # revision identifiers, used by Alembic.
 revision: str = "8f2af354fce6"
