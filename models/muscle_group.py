@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 class MuscleGroup(SQLModel, table=True):
     __tablename__ = "muscle_group"
     id: int | None = Field(default=None, primary_key=True)
-    group_name: str
+    name: str
     muscles: list["Muscle"] = Relationship(
         back_populates="muscle_group",
         sa_relationship_kwargs=dict(lazy="selectin"),

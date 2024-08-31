@@ -67,12 +67,12 @@ def insert_records(engine):  # exercise_table
         for p in program_types:
             session.add(p)
 
-        legs = MuscleGroup(group_name="legs")
-        arms = MuscleGroup(group_name="arms")
-        chest = MuscleGroup(group_name="chest")
-        back = MuscleGroup(group_name="back")
-        shoulders = MuscleGroup(group_name="shoulders")
-        core = MuscleGroup(group_name="core")
+        legs = MuscleGroup(name="legs")
+        arms = MuscleGroup(name="arms")
+        chest = MuscleGroup(name="chest")
+        back = MuscleGroup(name="back")
+        shoulders = MuscleGroup(name="shoulders")
+        core = MuscleGroup(name="core")
 
         muscle_groups = [legs, arms, chest, back, shoulders, core]
         for mg in muscle_groups:
@@ -80,28 +80,28 @@ def insert_records(engine):  # exercise_table
 
         session.commit()
 
-        quads = Muscle(muscle_name="quadriceps", muscle_group_id=legs.id)
-        hamstrings = Muscle(muscle_name="hamstrings", muscle_group_id=legs.id)
-        biceps_femoris = Muscle(muscle_name="biceps femoris", muscle_group_id=legs.id)
-        glutes = Muscle(muscle_name="glutes", muscle_group_id=legs.id)
-        calves = Muscle(muscle_name="calves", muscle_group_id=legs.id)
-        adductors = Muscle(muscle_name="adductors", muscle_group_id=legs.id)
-        abductors = Muscle(muscle_name="abductors", muscle_group_id=legs.id)
-        triceps = Muscle(muscle_name="triceps", muscle_group_id=arms.id)
-        biceps = Muscle(muscle_name="biceps", muscle_group_id=arms.id)
-        brachialis = Muscle(muscle_name="brachialis", muscle_group_id=arms.id)
-        brachioradialis = Muscle(muscle_name="brachioradialis", muscle_group_id=arms.id)
-        pecs = Muscle(muscle_name="pectoralis", muscle_group_id=chest.id)
-        lats = Muscle(muscle_name="latissimus dorsi", muscle_group_id=back.id)
-        traps = Muscle(muscle_name="trapezius", muscle_group_id=back.id)
-        rhomboids = Muscle(muscle_name="rhomboids", muscle_group_id=back.id)
-        front_delt = Muscle(muscle_name="front deltoid", muscle_group_id=shoulders.id)
-        side_delt = Muscle(muscle_name="side deltoid", muscle_group_id=shoulders.id)
-        rear_delt = Muscle(muscle_name="rear deltoid", muscle_group_id=shoulders.id)
-        abdominals = Muscle(muscle_name="abdominals", muscle_group_id=core.id)
-        obliques = Muscle(muscle_name="obliques", muscle_group_id=core.id)
-        erectors = Muscle(muscle_name="erector spinae", muscle_group_id=core.id)
-        serratus = Muscle(muscle_name="serratus anterior", muscle_group_id=core.id)
+        quads = Muscle(name="quadriceps", muscle_group_id=legs.id)
+        hamstrings = Muscle(name="hamstrings", muscle_group_id=legs.id)
+        biceps_femoris = Muscle(name="biceps femoris", muscle_group_id=legs.id)
+        glutes = Muscle(name="glutes", muscle_group_id=legs.id)
+        calves = Muscle(name="calves", muscle_group_id=legs.id)
+        adductors = Muscle(name="adductors", muscle_group_id=legs.id)
+        abductors = Muscle(name="abductors", muscle_group_id=legs.id)
+        triceps = Muscle(name="triceps", muscle_group_id=arms.id)
+        biceps = Muscle(name="biceps", muscle_group_id=arms.id)
+        brachialis = Muscle(name="brachialis", muscle_group_id=arms.id)
+        brachioradialis = Muscle(name="brachioradialis", muscle_group_id=arms.id)
+        pecs = Muscle(name="pectoralis", muscle_group_id=chest.id)
+        lats = Muscle(name="latissimus dorsi", muscle_group_id=back.id)
+        traps = Muscle(name="trapezius", muscle_group_id=back.id)
+        rhomboids = Muscle(name="rhomboids", muscle_group_id=back.id)
+        front_delt = Muscle(name="front deltoid", muscle_group_id=shoulders.id)
+        side_delt = Muscle(name="side deltoid", muscle_group_id=shoulders.id)
+        rear_delt = Muscle(name="rear deltoid", muscle_group_id=shoulders.id)
+        abdominals = Muscle(name="abdominals", muscle_group_id=core.id)
+        obliques = Muscle(name="obliques", muscle_group_id=core.id)
+        erectors = Muscle(name="erector spinae", muscle_group_id=core.id)
+        serratus = Muscle(name="serratus anterior", muscle_group_id=core.id)
 
         muscles = [
             quads,
@@ -310,6 +310,8 @@ def insert_records(engine):  # exercise_table
             ("Barbell Shrug", traps.id, None, False),
             ("Dumbbell Shrug", traps.id, None, False),
             ("Jump Shrug", traps.id, None, False),
+            ("Trap 3 Raise", traps.id, rear_delt.id, False),
+            ("Prone Trap Raise", traps.id, rear_delt.id, False),
             ("Barbell Curl", biceps.id, None, False),
             ("Dumbbell Curl", biceps.id, None, False),
             ("Cable Curl", biceps.id, None, False),
@@ -496,14 +498,14 @@ def upgrade() -> None:
     muscle_group_table = op.create_table(
         "muscle_group",
         sa.Column("id", sa.INTEGER(), nullable=False),
-        sa.Column("group_name", sa.VARCHAR(), nullable=False),
+        sa.Column("name", sa.VARCHAR(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
     )
 
     muscle_table = op.create_table(
         "muscle",
         sa.Column("id", sa.INTEGER(), nullable=False),
-        sa.Column("muscle_name", sa.VARCHAR(), nullable=False),
+        sa.Column("name", sa.VARCHAR(), nullable=False),
         sa.Column("muscle_group_id", sa.INTEGER(), nullable=False),
         sa.ForeignKeyConstraint(
             ["muscle_group_id"],

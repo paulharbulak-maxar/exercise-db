@@ -8,6 +8,8 @@ from starlette.responses import RedirectResponse
 
 from models.exercise import Exercise
 from models.exercise_set import ExerciseSet
+from models.muscle import Muscle
+from models.muscle_group import MuscleGroup
 from models.program import Program
 from models.template_exercise import TemplateExercise
 from models.workout import Workout
@@ -58,11 +60,18 @@ def get_workout_template(request: Request, template_id: int):
             select(WorkoutTemplate).where(WorkoutTemplate.id == template_id)
         ).one()
 
+        muscle_groups = session.exec(select(MuscleGroup)).all()
+        muscles = session.exec(select(Muscle)).all()
         exercises = session.exec(select(Exercise)).all()
         return templates.TemplateResponse(
             request=request,
             name="workout_template.html",
-            context={"workout_template": workout_template, "exercises": exercises},
+            context={
+                "workout_template": workout_template,
+                "exercises": exercises,
+                "muscles": muscles,
+                "muscle_groups": muscle_groups,
+            },
         )
 
 

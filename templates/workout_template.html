@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% block title %}Workout Template{% endblock %}
+{% block scripts %}
+    {{ super() }}
+{% endblock %}
 {% block content %}
     <h1 class="flex place-content-center m-4 text-xl md:text-2xl lg:text-3xl font-bold leading-none tracking-tight text-gray-900 dark:text-white"">
         {{ get_weekday(workout_template.day_of_week) }} - {{ workout_template.label }}
@@ -29,9 +32,9 @@
                 <tr class="bg-white {{ 'border-b' if not loop.last }} dark:bg-gray-800 dark:border-gray-700">
                     <td class="px-6 py-3">{{ template_exercise.order }}</td>
                     <td class="px-6 py-3">{{ template_exercise.exercise.name }}</td>
-                    <td class="px-6 py-3">{{ template_exercise.exercise.primary_muscles.muscle_name.capitalize() }}</td>
+                    <td class="px-6 py-3">{{ template_exercise.exercise.primary_muscle.name.capitalize() }}</td>
                     {% if template_exercise.exercise.secondary_muscles %}
-                    <td class="px-6 py-3">{{ template_exercise.exercise.secondary_muscles.muscle_name.capitalize() }}</td>
+                    <td class="px-6 py-3">{{ template_exercise.exercise.secondary_muscle.name.capitalize() }}</td>
                     {% else %}
                     <td class="px-6 py-3"></td>
                     {% endif %}
@@ -49,22 +52,59 @@
             </table>
         </div>
     </div>
-    <form action="{{ url_for('create_template_exercise', workout_template_id=workout_template.id) }}" method="post" enctype="multipart/form-data">
-        <div class="flex flex-row justify-center">
-            <div class="form-group gap-2 mb-4 w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
-                <h2 class="flex place-content-center mb-4 text-xl md:text-xl lg:text-xl font-bold leading-none tracking-tight text-gray-900 dark:text-white">
-                    Add Exercise to Workout
-                </h2>
-                <label for="exercise_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Exercises</label>
-                <select id="exercise_id" name="exercise_id" class="mb-4 shrink bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+
+    <div class="flex flex-row justify-center">
+        <div class="form-group gap-2 mb-4 w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
+            <h2 class="flex place-content-center mb-4 text-xl md:text-xl lg:text-xl font-bold leading-none tracking-tight text-gray-900 dark:text-white">
+                Add Exercise to Workout
+            </h2>
+            <label for="muscle" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Muscle</label>
+            <select id="muscle"
+                    name="muscle"
+                    class="mb-4 shrink bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <option> </option>
+                {% for muscle in muscles|sort(attribute='name') %}
+                <option value={{muscle.id}}>{{ muscle.name|capitalize }}</option>
+                {% endfor %}
+            </select>
+            <form action="{{ url_for('create_template_exercise', workout_template_id=workout_template.id) }}" method="post" enctype="multipart/form-data">
+                <label for="exercise_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Exercise</label>
+                <select id="exercise_id"
+                        name="exercise_id"
+                        class="mb-4 shrink bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     {% for exercise in exercises %}
-                        <option value={{exercise.id}}>{{ exercise.name }}</option>
+                        <option data-muscle-id="{{exercise.muscle_primary}}" value={{exercise.id}}>{{ exercise.name }}</option>
                      {% endfor %}
                 </select>
                 <button id="create" type='submit' class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                     Add
                 </button>
-            </div>
+            </form>
         </div>
-    </form>
+    </div>
+    <script>
+        function filterSelect(e) {
+            var filterVal = e.target.value;
+            console.log(filterVal);
+            select_tag = document.getElementById("exercise_id");
+            var options = select_tag.options;
+            let filteredOptions = [];
+            for (var i = 0; i < options.length; i++) {
+                var option = options[i];
+                var optionFilter = option.getAttribute('data-muscle-id');
+                if (optionFilter === filterVal) {
+                    option.style.display = 'block';
+                    filteredOptions.push(option);
+                } else {
+                    option.style.display = 'none';
+                }
+            }
+            filteredOptions[0].selected = true;
+        }
+
+        document.getElementById("muscle").addEventListener(
+            "input",
+            filterSelect,
+        );
+    </script>
 {% endblock %}

@@ -12,13 +12,13 @@ class Exercise(SQLModel, table=True):
     muscle_primary: int | None = Field(default=None, foreign_key="muscle.id")
     muscle_secondary: int | None = Field(default=None, foreign_key="muscle.id")
     is_compound: bool
-    primary_muscles: list["Muscle"] = Relationship(
+    primary_muscle: Muscle = Relationship(
         back_populates="primary_exercises",
         sa_relationship_kwargs=dict(
             lazy="selectin", foreign_keys="[Exercise.muscle_primary]"
         ),
     )
-    secondary_muscles: list["Muscle"] = Relationship(
+    secondary_muscle: Muscle = Relationship(
         back_populates="secondary_exercises",
         sa_relationship_kwargs=dict(
             lazy="selectin", foreign_keys="[Exercise.muscle_secondary]"

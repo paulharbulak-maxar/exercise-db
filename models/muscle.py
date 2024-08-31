@@ -9,20 +9,20 @@ if TYPE_CHECKING:
 
 class Muscle(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    muscle_name: str
+    name: str
     muscle_group_id: int | None = Field(default=None, foreign_key="muscle_group.id")
     muscle_group: Optional["MuscleGroup"] = Relationship(
         back_populates="muscles",
         sa_relationship_kwargs=dict(lazy="selectin"),
     )
     primary_exercises: list["Exercise"] = Relationship(
-        back_populates="primary_muscles",
+        back_populates="primary_muscle",
         sa_relationship_kwargs=dict(
             lazy="selectin", foreign_keys="[Exercise.muscle_primary]"
         ),
     )
     secondary_exercises: list["Exercise"] = Relationship(
-        back_populates="secondary_muscles",
+        back_populates="secondary_muscle",
         sa_relationship_kwargs=dict(
             lazy="selectin", foreign_keys="[Exercise.muscle_secondary]"
         ),
