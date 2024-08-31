@@ -58,13 +58,22 @@
             <h2 class="flex place-content-center mb-4 text-xl md:text-xl lg:text-xl font-bold leading-none tracking-tight text-gray-900 dark:text-white">
                 Add Exercise to Workout
             </h2>
+            <label for="muscle_group" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Muscle Group</label>
+            <select id="muscle_group"
+                    name="muscle_group"
+                    class="mb-4 shrink bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <option> </option>
+                {% for group in muscle_groups|sort(attribute='name') %}
+                <option value={{group.id}}>{{ group.name|capitalize }}</option>
+                {% endfor %}
+            </select>
             <label for="muscle" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Muscle</label>
             <select id="muscle"
                     name="muscle"
                     class="mb-4 shrink bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                 <option> </option>
                 {% for muscle in muscles|sort(attribute='name') %}
-                <option value={{muscle.id}}>{{ muscle.name|capitalize }}</option>
+                <option data-muscle-group-id="{{muscle.muscle_group_id}}" value={{muscle.id}}>{{ muscle.name|capitalize }}</option>
                 {% endfor %}
             </select>
             <form action="{{ url_for('create_template_exercise', workout_template_id=workout_template.id) }}" method="post" enctype="multipart/form-data">
@@ -82,27 +91,20 @@
             </form>
         </div>
     </div>
-    <script>
-        function filterSelect(e) {
-            var filterVal = e.target.value;
-            console.log(filterVal);
-            select_tag = document.getElementById("exercise_id");
-            var options = select_tag.options;
-            let filteredOptions = [];
-            for (var i = 0; i < options.length; i++) {
-                var option = options[i];
-                var optionFilter = option.getAttribute('data-muscle-id');
-                if (optionFilter === filterVal) {
-                    option.style.display = 'block';
-                    filteredOptions.push(option);
-                } else {
-                    option.style.display = 'none';
-                }
-            }
-            filteredOptions[0].selected = true;
-        }
 
-        document.getElementById("muscle").addEventListener(
+    <script>
+        muscleGroupFilter = document.getElementById("muscle_group")
+        muscleGroupFilter.queryId = 'muscle';
+        muscleGroupFilter.dataAttribute = 'data-muscle-group-id';
+        muscleGroupFilter.addEventListener(
+            "input",
+            filterSelect,
+        );
+        
+        muscleFilter = document.getElementById("muscle")
+        muscleFilter.queryId = 'exercise_id';
+        muscleFilter.dataAttribute = 'data-muscle-id';
+        muscleFilter.addEventListener(
             "input",
             filterSelect,
         );

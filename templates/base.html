@@ -4,6 +4,26 @@
     {% block head %}
     {% block scripts %}
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        function filterSelect(e) {
+            var filterVal = e.target.value;
+            console.log(e.target.value);
+            select_tag = document.getElementById(e.target.queryId);
+            var options = select_tag.options;
+            var filteredOptions = [];
+            for (var i = 0; i < options.length; i++) {
+                var option = options[i];
+                var optionFilter = option.getAttribute(e.target.dataAttribute);
+                if (optionFilter === filterVal) {
+                    option.style.display = 'block';
+                    filteredOptions.push(option);
+                } else {
+                    option.style.display = 'none';
+                }
+            }
+            filteredOptions[0].selected = true;
+        }
+    </script>
     {% endblock %}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
