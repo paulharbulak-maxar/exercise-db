@@ -33,7 +33,7 @@
                     <td class="px-6 py-3">{{ template_exercise.order }}</td>
                     <td class="px-6 py-3">{{ template_exercise.exercise.name }}</td>
                     <td class="px-6 py-3">{{ template_exercise.exercise.primary_muscle.name.capitalize() }}</td>
-                    {% if template_exercise.exercise.secondary_muscles %}
+                    {% if template_exercise.exercise.secondary_muscle %}
                     <td class="px-6 py-3">{{ template_exercise.exercise.secondary_muscle.name.capitalize() }}</td>
                     {% else %}
                     <td class="px-6 py-3"></td>
@@ -91,7 +91,6 @@
             </form>
         </div>
     </div>
-
     <script>
         muscleGroupFilter = document.getElementById("muscle_group")
         muscleGroupFilter.queryId = 'muscle';

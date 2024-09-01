@@ -6,6 +6,7 @@ from sqlmodel import Session, select
 from starlette import status
 from starlette.responses import RedirectResponse
 
+from models.muscle import Muscle
 from models.program import Program
 from models.program_type import ProgramType
 from models.template_exercise import TemplateExercise
@@ -53,10 +54,15 @@ def get_programs(request: Request):
     with Session(engine) as session:
         programs = session.exec(select(Program)).all()
         program_types = session.exec(select(ProgramType)).all()
+        muscles = session.exec(select(Muscle)).all()
         return templates.TemplateResponse(
             request=request,
             name="programs.html",
-            context={"programs": programs, "program_types": program_types},
+            context={
+                "programs": programs,
+                "program_types": program_types,
+                "muscles": muscles,
+            },
         )
 
         # return programs

@@ -79,9 +79,40 @@
     </div>
     </div>
     <div class="flex place-content-center m-4">
-        <button id="create" type='submit' class="w-1/4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-            Create
+        <button id="create" type='submit' class="shrink text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+            Create New Program
         </button>
+    </div>
+</form>
+<form action="{{ url_for('create_exercise') }}" method="post" action="/submit" enctype="multipart/form-data">
+    <div class="flex flex-row justify-center">
+        <div class="flex flex-col form-group gap-2 my-6 w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
+            <h2 class="flex place-content-center mb-4 text-xl md:text-xl lg:text-xl font-bold leading-none tracking-tight text-gray-900 dark:text-white">
+                Add Exercise to Database
+            </h2>
+            <label for="muscle_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Primary Muscle</label>
+            <select id="muscle_id" name="muscle_primary" class="mb-4 shrink bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                {% for muscle in muscles|sort(attribute='name') %}
+                    <option value={{muscle.id}}>{{ muscle.name|capitalize }}</option>
+                 {% endfor %}
+            </select>
+            <label for="muscle_2_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Secondary Muscle</label>
+            <select id="muscle_2_id" name="muscle_secondary" class="mb-4 shrink bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <option> </option>
+                {% for muscle in muscles|sort(attribute='name') %}
+                    <option value={{muscle.id}}>{{ muscle.name|capitalize }}</option>
+                 {% endfor %}
+            </select>
+            <div class="flex items-center mb-2">
+                <input type="checkbox" id="is_compound" name="is_compound" value="True" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                <label for="is_compound" class="ms-2 text-sm font-medium text-gray-900 dark:text-white">Compound Exercise</label>
+            </div>
+            <label for="exercise_name" class="block mb-1 text-sm font-medium text-gray-900 dark:text-white">Exercise Name</label>
+            <input type="text" id="exercise_name" name="name" class="min-h-11 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            <button id="add_exercise" type='submit' class="mt-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                Add
+            </button>
+        </div>
     </div>
 </form>
 {% endblock %}
