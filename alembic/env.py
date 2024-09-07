@@ -1,13 +1,35 @@
+import urllib
 from logging.config import fileConfig
+from os import environ
 
-from sqlalchemy import engine_from_config, pool
+from dotenv import load_dotenv
+from sqlalchemy import URL, engine_from_config, pool
 from sqlmodel import SQLModel
 
 from alembic import context
 
+load_dotenv()
+# TODO: Move to config.py
+POSTGRES_DB = environ["POSTGRES_DB"]
+POSTGRES_USER = environ["POSTGRES_USER"]
+POSTGRES_PASSWORD = environ["POSTGRES_PASSWORD"]
+DB_HOST = environ["DB_HOST"]
+DB_PORT = int(environ["DB_PORT"])
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
+url_object = URL.create(
+    "postgresql",
+    username=POSTGRES_USER,
+    password=POSTGRES_PASSWORD,
+    host=DB_HOST,
+    database=POSTGRES_DB,
+    port=DB_PORT,
+)
+url_str = urllib.parse.unquote(url_object.render_as_string(hide_password=False))
+print(url_str)
+config.set_main_option("sqlalchemy.url", url_str)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
