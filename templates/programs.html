@@ -4,86 +4,90 @@
     <h1 class="flex place-content-center m-4 text-2xl md:text-3xl lg:text-4xl font-bold leading-none tracking-tight text-gray-900 dark:text-white">
         Programs
     </h1>
-    <div class="flex flex-row place-content-center">
-        <div class="shrink overflow-auto max-h-64 m-4 border dark:border-gray-700 shadow-md rounded-lg">
-        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                <tr>
-                    <th scope="col" class="px-6 py-3">Start Date</th>
-                    <th scope="col" class="px-6 py-3">Name</th>
-                    <th scope="col" class="px-6 py-3">Type</th>
-                    <th scope="col" class="px-6 py-3">Description</th>
-                    <th scope="col" class="px-6 py-3">
-                        <span class="sr-only">Edit</span>
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        <span class="sr-only">Delete</span>
-                    </th>
+    <div class="flex flex-col items-center">
+        <div class="flex shrink overflow-auto max-h-64 m-4 border dark:border-gray-700 shadow-md rounded-lg">
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Start Date</th>
+                        <th scope="col" class="px-6 py-3">Last Workout</th>
+                        <th scope="col" class="px-6 py-3">Name</th>
+                        <th scope="col" class="px-6 py-3">Type</th>
+                        <th scope="col" class="px-6 py-3">Description</th>
+                        <th scope="col" class="px-6 py-3">
+                            <span class="sr-only">Edit</span>
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            <span class="sr-only">Delete</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for program in programs %}
+                <tr class="text-nowrap bg-white {{ 'border-b' if not loop.last }} {{ 'odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800' if programs|length > 2 }} bg-white dark:bg-gray-800 dark:border-gray-700">
+                    <td class="px-6 py-4">{{ program.start_date.strftime('%Y-%m-%d') }}</td>
+                    <td class="px-6 py-4">{{ program.workouts | sort(attribute='date') | last | attr('date') if program.workouts }}</td>
+                    <td class="px-6 py-4">{{ program.name }}</td>
+                    <td class="px-6 py-4">{{ program.program_type.name }}</td>
+                    <td class="px-6 py-4">{{ program.description }}</td>
+                    <td class="px-6 py-4">
+                        <a href="{{ url_for('get_program', program_id=program.id) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                            View
+                        </a>
+                    </td>
+                    <td class="px-6 py-3">
+                        <form action="/programs/{{ program.id }}/delete" method="post">
+                            <button id="delete" type='submit' class="w-full text-white bg-gray-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-gray-300 text-sm font-medium rounded-lg px-4 py-2 text-center dark:bg-gray-600 dark:hover:bg-red-700 dark:focus:ring-gray-800">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-            {% for program in programs %}
-            <tr class="text-nowrap bg-white {{ 'border-b' if not loop.last }} {{ 'odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800' if programs|length > 2 }} bg-white dark:bg-gray-800 dark:border-gray-700">
-                <td class="px-6 py-4">{{ program.start_date.strftime('%Y-%m-%d') }}</td>
-                <td class="px-6 py-4">{{ program.name }}</td>
-                <td class="px-6 py-4">{{ program.program_type.name }}</td>
-                <td class="px-6 py-4">{{ program.description }}</td>
-                <td class="px-6 py-4">
-                    <a href="{{ url_for('get_program', program_id=program.id) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
-                        View
-                    </a>
-                </td>
-                <td class="px-6 py-3">
-                    <form action="/programs/{{ program.id }}/delete" method="post">
-                        <button id="delete" type='submit' class="w-full text-white bg-gray-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-gray-300 text-sm font-medium rounded-lg px-4 py-2 text-center dark:bg-gray-600 dark:hover:bg-red-700 dark:focus:ring-gray-800">
-                            Delete
-                        </button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    </div>
-    <form action="/programs" method="post" enctype="multipart/form-data">
-    <div class="flex flex-row place-content-center">
-    <div class="form-group grid gap-2 m-2 md:grid-cols-2">
-        <div class="max-w-48">
-            <label for="program_type_id"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Program Type</label>
-            <select id="program_type_id"
-                    name="program_type_id"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                {% for program_type in program_types %}
-                    <option value={{program_type.id}}>{{ program_type.name }}</option>
-                 {% endfor %}
-            </select>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
-        <div class="max-w-48">
-            <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name:</label>
-            <input type="text" id="name" name="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-        </div>
-            <!--        Create check for start_date-->
-        <div class="max-w-48">
-            <label for="start_date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Start Date:</label>
-            <input type="date" id="start_date" name="start_date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-        </div>
-        <div class="max-w-48">
-            <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description:</label>
-            <textarea type="text"
-                      id="description"
-                      name="description"
-                      class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
+
+        <div class="flex w-fit">
+            <form action="/programs" method="post" enctype="multipart/form-data">
+                <div class="form-group grid gap-2 m-2 md:grid-cols-2">
+                    <div>
+                        <label for="program_type_id"
+                               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Program Type</label>
+                        <select id="program_type_id"
+                                name="program_type_id"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            {% for program_type in program_types %}
+                                <option value={{program_type.id}}>{{ program_type.name }}</option>
+                             {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name:</label>
+                        <input type="text" id="name" name="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    </div>
+                        <!--        Create check for start_date-->
+                    <div>
+                        <label for="start_date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Start Date:</label>
+                        <input type="date" id="start_date" name="start_date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description:</label>
+                        <textarea type="text"
+                                  id="description"
+                                  name="description"
+                                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
+                    </div>
+                </div>
+                <div class="flex place-content-center m-4">
+                    <button id="create" type='submit' class="shrink text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        Create New Program
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
-    </div>
-    <div class="flex place-content-center m-4">
-        <button id="create" type='submit' class="shrink text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-            Create New Program
-        </button>
-    </div>
-</form>
+
 <form action="{{ url_for('create_exercise') }}" method="post" action="/submit" enctype="multipart/form-data">
     <div class="flex flex-row justify-center">
         <div class="flex flex-col form-group gap-2 my-6 w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">

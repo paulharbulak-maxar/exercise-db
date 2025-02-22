@@ -4,8 +4,8 @@
     <h1 class="flex place-content-center m-4 text-xl md:text-2xl lg:text-3xl font-bold leading-none tracking-tight text-gray-900 dark:text-white">
         {{ program.name }}
     </h1>
-    <p class="flex place-content-center text-gray-300">Start Date: {{ program.start_date.strftime('%Y-%m-%d') }}</p>
-    <p class="flex place-content-center text-gray-300">Type: {{ program.program_type.name }}</p>
+    <p class="flex place-content-center text-sm text-gray-300">Start Date: {{ program.start_date.strftime('%Y-%m-%d') }}</p>
+    <p class="flex place-content-center text-sm text-gray-300">Type: {{ program.program_type.name }}</p>
     <div class="flex justify-around">
         <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-flow-col lg:auto-cols-fr m-4 gap-4">
         {% for workout_template in workout_templates %}
