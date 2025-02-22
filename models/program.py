@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 from typing import TYPE_CHECKING, Optional
 
 from sqlmodel import Field, Relationship, SQLModel
@@ -18,7 +18,7 @@ class Program(SQLModel, table=True):
         back_populates="programs",
         sa_relationship_kwargs=dict(lazy="selectin"),
     )
-    start_date: datetime
+    start_date: date
     description: Optional[str]
     workout_templates: list["WorkoutTemplate"] = Relationship(
         back_populates="program",

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 from typing import TYPE_CHECKING, Optional
 
 from sqlmodel import Field, Relationship, SQLModel
@@ -23,7 +23,7 @@ class Workout(SQLModel, table=True):
         # back_populates="workouts",
         sa_relationship_kwargs=dict(lazy="selectin"),
     )
-    date: datetime
+    date: date
     duration: int | None
     exercises: list["WorkoutExercise"] = Relationship(
         back_populates="workout",

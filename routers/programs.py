@@ -34,7 +34,7 @@ def create_program(
     program = Program(
         name=name,
         program_type_id=program_type_id,
-        start_date=datetime.strptime(start_date, "%Y-%m-%d").date(),
+        start_date=datetime.strptime(start_date, "%Y-%m-%d"),
         description=description,
     )
 

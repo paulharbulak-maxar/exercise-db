@@ -18,17 +18,22 @@ from routers import (
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
-app.include_router(exercise_sets.router)
-app.include_router(exercises.router)
-app.include_router(muscle_groups.router)
-app.include_router(muscles.router)
-app.include_router(program_types.router)
-app.include_router(programs.router)
-app.include_router(template_exercises.router)
-app.include_router(users.router)
-app.include_router(workout_exercises.router)
-app.include_router(workout_templates.router)
-app.include_router(workouts.router)
+routers = [
+    exercise_sets.router,
+    exercises.router,
+    muscle_groups.router,
+    muscles.router,
+    program_types.router,
+    programs.router,
+    template_exercises.router,
+    users.router,
+    workout_exercises.router,
+    workout_templates.router,
+    workouts.router
+]
+
+for router in routers:
+    app.include_router(router)
 
 
 if __name__ == "__main__":

@@ -10,11 +10,11 @@ from alembic import context
 
 load_dotenv()
 # TODO: Move to config.py
-POSTGRES_DB = environ["POSTGRES_DB"]
-POSTGRES_USER = environ["POSTGRES_USER"]
+POSTGRES_DB = environ.get("POSTGRES_DB", "exercise")
+POSTGRES_USER = environ.get("POSTGRES_USER", "postgres")
 POSTGRES_PASSWORD = environ["POSTGRES_PASSWORD"]
-DB_HOST = environ["DB_HOST"]
-DB_PORT = int(environ["DB_PORT"])
+DB_HOST = environ.get("DB_HOST", "localhost")
+DB_PORT = int(environ.get("DB_PORT", 5432))
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
