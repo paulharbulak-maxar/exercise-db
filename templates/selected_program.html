@@ -23,14 +23,14 @@
                 <div class="grow content-end">
                     <div class="flex flex-row justify-center gap-4">
                         <div class="basis-1/2">
-                            <form action="{{ url_for('get_workout_template', template_id=workout_template.id) }}" method="get">
+                            <form action="{{ url_for('get_workout_template_html', template_id=workout_template.id) }}" method="get">
                                 <button id="view_template" type='submit' class="w-full text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 font-normal antialiased rounded-lg text-xs px-5 py-2.5 text-center dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800">
                                     Edit
                                 </button>
                             </form>
                         </div>
                         <div class="basis-1/2">
-                            <form action="{{ url_for('create_workout', template_id=workout_template.id) }}" method="post">
+                            <form action="{{ url_for('create_workout_html', template_id=workout_template.id) }}" method="post">
                                 <input class="hidden" id="program_id_1" name="program_id" value="{{ program.id }}">
                                 <button id="log_workout" type='submit' class="w-full text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 font-normal antialiased rounded-lg text-xs px-5 py-2.5 text-center dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800">
                                     Log
@@ -43,7 +43,7 @@
         {% endfor %}
     </div>
     </div>
-    <form action="{{ url_for('create_workout_template', program_id=program.id) }}" method="post" enctype="multipart/form-data">
+    <form action="{{ url_for('create_workout_template_html', program_id=program.id) }}" method="post" enctype="multipart/form-data">
         <div class="flex flex-row justify-center my-4">
             <div class="flex flex-col">
                 <h2 class="flex place-content-center text-xl md:text-xl lg:text-xl font-bold leading-none tracking-tight text-gray-900 dark:text-white">
@@ -104,7 +104,7 @@
                     <td class="px-6 py-4">N/A</td>
                     {% endif %}
                     <td class="px-6 py-4">
-                        <a href="{{ url_for('get_workout', workout_id=workout.id) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">View</a>
+                        <a href="{{ url_for('get_workout_html', workout_id=workout.id) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">View</a>
                     </td>
                 </tr>
                 {% endfor %}

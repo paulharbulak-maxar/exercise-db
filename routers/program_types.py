@@ -1,7 +1,6 @@
 from fastapi import APIRouter
 from sqlmodel import Session, select
 
-from models.program import Program
 from models.program_type import ProgramType
 from routers.utils.database import engine
 

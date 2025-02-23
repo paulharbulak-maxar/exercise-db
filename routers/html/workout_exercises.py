@@ -7,7 +7,6 @@ from starlette.responses import RedirectResponse
 
 from models.exercise import Exercise
 from models.exercise_set import ExerciseSet
-from models.workout import Workout
 from models.workout_exercise import WorkoutExercise
 from routers import templates
 from routers.utils.database import engine
@@ -25,8 +24,7 @@ router = APIRouter(
 
 
 @router.get("/{workout_exercise_id}", response_model=WorkoutExercise)
-# def get_workout_exercise(workout_exercise_id: int):
-def get_workout_exercise(request: Request, workout_exercise_id: int):
+def get_workout_exercise_html(request: Request, workout_exercise_id: int):
     with Session(engine) as session:
         workout_exercise = session.exec(
             select(WorkoutExercise).where(WorkoutExercise.id == workout_exercise_id)
@@ -41,9 +39,8 @@ def get_workout_exercise(request: Request, workout_exercise_id: int):
         )
 
 
-# @router.put("/workout_exercises/{workout_exercise_id}", response_model=WorkoutExercise)
 @router.post("/{workout_exercise_id}/update", response_model=WorkoutExercise)
-def update_workout_exercise(
+def update_workout_exercise_html(
     workout_exercise_id: int,
     order: Annotated[int, Form()],
     exercise_id: Annotated[int, Form()],
@@ -64,18 +61,16 @@ def update_workout_exercise(
         session.commit()
         session.refresh(workout_exercise)
 
-        # return workout_exercise
         return RedirectResponse(
             workout_router.url_path_for(
-                "get_workout", workout_id=workout_exercise.workout_id
+                "get_workout_html", workout_id=workout_exercise.workout_id
             ),
             status_code=status.HTTP_303_SEE_OTHER,
         )
 
 
-# @router.delete("/workout_exercises/{workout_exercise_id}")
 @router.post("/{workout_exercise_id}/delete", response_model=WorkoutExercise)
-def delete_workout_exercise(workout_exercise_id: int):
+def delete_workout_exercise_html(workout_exercise_id: int):
     with Session(engine) as session:
         workout_exercise = session.exec(
             select(WorkoutExercise).where(WorkoutExercise.id == workout_exercise_id)
@@ -88,7 +83,7 @@ def delete_workout_exercise(workout_exercise_id: int):
 
         return RedirectResponse(
             workout_router.url_path_for(
-                "get_workout",
+                "get_workout_html",
                 workout_id=workout_id,
             ),
             status_code=status.HTTP_303_SEE_OTHER,
@@ -100,7 +95,7 @@ def delete_workout_exercise(workout_exercise_id: int):
     "/{workout_exercise_id}/exercise_sets/",
     response_model=ExerciseSet,
 )
-def create_exercise_set(
+def create_exercise_set_html(
     workout_exercise_id: int,
     set_number: Annotated[int, Form()],
     weight: Annotated[int, Form()],
@@ -119,22 +114,7 @@ def create_exercise_set(
 
     return RedirectResponse(
         router.url_path_for(
-            "get_workout_exercise", workout_exercise_id=workout_exercise_id
+            "get_workout_exercise_html", workout_exercise_id=workout_exercise_id
         ),
         status_code=status.HTTP_303_SEE_OTHER,
     )
-
-
-@router.get(
-    "/workout_exercises/{workout_exercise_id}/exercise_sets/",
-    response_model=list[ExerciseSet],
-)
-def get_exercise_sets(workout_exercise_id: int):
-    with Session(engine) as session:
-        exercise_sets = session.exec(
-            select(ExerciseSet).where(
-                ExerciseSet.workout_exercise_id == workout_exercise_id
-            )
-        ).all()
-
-        return exercise_sets

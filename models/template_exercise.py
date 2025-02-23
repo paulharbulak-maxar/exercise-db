@@ -1,3 +1,5 @@
+from typing import Optional
+
 from sqlmodel import Field, Relationship, SQLModel
 
 from models.exercise import Exercise
@@ -6,7 +8,7 @@ from models.exercise import Exercise
 class TemplateExercise(SQLModel, table=True):
     __tablename__ = "template_exercise"
     id: int | None = Field(default=None, primary_key=True)
-    order: int = 0
+    order: Optional[int] = None
     workout_template_id: int | None = Field(
         default=None, foreign_key="workout_template.id", ondelete="CASCADE"
     )
