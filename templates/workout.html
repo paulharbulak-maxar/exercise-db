@@ -13,7 +13,7 @@
         <form action="{{ url_for('update_workout', workout_id=workout.id) }}" method="post" enctype="multipart/form-data">
             <div class="flex flex-row justify-center gap-x-2">
                 <div class="flex flex-col">
-                    <label for="duration" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Duration</label>
+                    <label for="duration" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Duration (minutes)</label>
                     <input type="number" id="duration" name="duration" value="{{ workout.duration }}" max="180" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                 </div>
                 <div class="flex flex-col">

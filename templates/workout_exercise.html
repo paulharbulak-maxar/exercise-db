@@ -9,9 +9,9 @@
             {{ workout_exercise.workout.date.strftime('%Y-%m-%d') }}
         </a>
     </h2>
-    <div class="grid grid-cols-1 md:grid-cols-3 m-4 gap-4 place-content-center">
+    <div class="flex grid justify-items-center grid-cols-1 md:grid-cols-3 m-4 gap-4">
         <form action="{{ url_for('create_exercise_set', workout_exercise_id=workout_exercise.id) }}" method="post" enctype="multipart/form-data">
-            <div class="flex flex-col form-group gap-2 w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
+            <div class="flex flex-col justify-self-end form-group gap-2 w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
                 <h2 class="flex place-content-center text-xl md:text-xl lg:text-xl font-bold leading-none tracking-tight text-gray-900 dark:text-white">
                     Add Set
                 </h2>
