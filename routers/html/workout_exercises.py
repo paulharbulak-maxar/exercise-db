@@ -18,7 +18,7 @@ from routers.html.workouts import router as workout_router
 
 router = APIRouter(
     prefix="/html/workout_exercises",
-    tags=["workout_exercises"],
+    tags=["html", "workout_exercises"],
     responses={404: {"description": "Not found"}},
 )
 

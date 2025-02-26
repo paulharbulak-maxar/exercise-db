@@ -15,7 +15,27 @@ router = APIRouter(
 )
 
 
-@router.delete("/template_exercises/{template_exercise_id}", response_model=dict)
+@router.post("/{template_exercise_id}", response_model=TemplateExercise)
+def create_template_exercise(template_exercise: TemplateExercise):
+    with Session(engine) as session:
+        session.add(template_exercise)
+        session.commit()
+        session.refresh(template_exercise)
+
+    return template_exercise
+
+
+@router.get("/{template_exercise_id}", response_model=TemplateExercise)
+def get_template_exercise(template_exercise_id: int):
+    with Session(engine) as session:
+        template_exercise = session.exec(
+            select(TemplateExercise).where(TemplateExercise.id == template_exercise_id)
+        ).one()
+
+    return template_exercise
+
+
+@router.delete("/{template_exercise_id}", response_model=dict)
 def delete_template_exercise(template_exercise_id: int):
     with Session(engine) as session:
         template_exercise = session.exec(
@@ -29,7 +49,7 @@ def delete_template_exercise(template_exercise_id: int):
         return {"deleted": template_exercise.id}
 
 
-@router.put("/template_exercises/{template_exercise_id}", response_model=TemplateExercise)
+@router.put("/{template_exercise_id}", response_model=TemplateExercise)
 def update_template_exercise(
     template_exercise_id: int,
     order: int,

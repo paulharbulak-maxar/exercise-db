@@ -15,7 +15,7 @@ from routers.utils.order_exercises import increment_exercise_order
 
 router = APIRouter(
     prefix="/html/workouts",
-    tags=["workouts"],
+    tags=["html", "workouts"],
     responses={404: {"description": "Not found"}},
 )
 

@@ -7,7 +7,6 @@ from starlette.responses import RedirectResponse
 
 from models.exercise import Exercise
 from models.exercise_set import ExerciseSet
-from models.workout import Workout
 from models.workout_exercise import WorkoutExercise
 from routers import templates
 from routers.utils.database import engine

@@ -11,7 +11,7 @@ from routers.utils.database import engine
 
 router = APIRouter(
     prefix="/html/exercises",
-    tags=["exercises"],
+    tags=["html", "exercises"],
     responses={404: {"description": "Not found"}},
 )
 

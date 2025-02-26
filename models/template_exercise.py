@@ -7,8 +7,8 @@ from models.exercise import Exercise
 
 class TemplateExercise(SQLModel, table=True):
     __tablename__ = "template_exercise"
-    id: int | None = Field(default=None, primary_key=True)
-    order: Optional[int] = None
+    id: Optional[int] = Field(default=None, primary_key=True)
+    order: Optional[int] = 1
     workout_template_id: int | None = Field(
         default=None, foreign_key="workout_template.id", ondelete="CASCADE"
     )

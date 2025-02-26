@@ -1,9 +1,7 @@
 from fastapi import APIRouter
 from sqlmodel import Session, select
 
-from models.exercise import Exercise
 from models.muscle import Muscle
-from models.muscle_group import MuscleGroup
 from routers.utils.database import engine
 
 router = APIRouter(

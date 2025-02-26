@@ -16,7 +16,7 @@ from routers.utils.database import engine
 
 router = APIRouter(
     prefix="/html/programs",
-    tags=["programs"],
+    tags=["html", "programs"],
     responses={404: {"description": "Not found"}},
 )
 

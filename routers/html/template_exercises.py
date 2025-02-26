@@ -3,7 +3,6 @@ from sqlmodel import Session, select
 from starlette import status
 from starlette.responses import RedirectResponse
 
-from models.exercise import Exercise
 from models.template_exercise import TemplateExercise
 from routers.utils.database import engine
 from routers.utils.order_exercises import (
@@ -14,7 +13,7 @@ from routers.html.workout_templates import router as template_router
 
 router = APIRouter(
     prefix="/html/template_exercises",
-    tags=["template_exercises"],
+    tags=["html", "template_exercises"],
     responses={404: {"description": "Not found"}},
 )
 

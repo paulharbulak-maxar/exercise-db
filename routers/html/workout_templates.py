@@ -19,7 +19,7 @@ from routers.utils.database import engine
 
 router = APIRouter(
     prefix="/html/workout_templates",
-    tags=["workout_templates"],
+    tags=["html", "workout_templates"],
     responses={404: {"description": "Not found"}},
 )
 

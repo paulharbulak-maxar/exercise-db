@@ -1,14 +1,7 @@
-from typing import Annotated, Optional
-
-from fastapi import APIRouter, Form
+from fastapi import APIRouter
 from sqlmodel import Session, select
-from starlette import status
-from starlette.responses import RedirectResponse
 
-from models.emg_activation import EmgActivation
 from models.exercise import Exercise
-from models.muscle import Muscle
-from routers.html.programs import router as program_router
 from routers.utils.database import engine
 
 router = APIRouter(
