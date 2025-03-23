@@ -1,17 +1,7 @@
-import urllib
-from os import environ
-
-from dotenv import load_dotenv
 from sqlalchemy import URL
 from sqlmodel import create_engine
 
-load_dotenv()
-# TODO: Move to config.py
-POSTGRES_DB = environ.get("POSTGRES_DB", "exercise")
-POSTGRES_USER = environ.get("POSTGRES_USER", "postgres")
-POSTGRES_PASSWORD = environ.get("POSTGRES_PASSWORD")
-DB_HOST = environ.get("DB_HOST", "localhost")
-DB_PORT = int(environ.get("DB_PORT", 4321))
+from config import DB_HOST, DB_PORT, POSTGRES_DB, POSTGRES_PASSWORD, POSTGRES_USER
 
 if all([POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD, DB_HOST, DB_PORT]):
     url_object = URL.create(

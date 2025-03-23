@@ -1,20 +1,11 @@
 import urllib
 from logging.config import fileConfig
-from os import environ
 
-from dotenv import load_dotenv
 from sqlalchemy import URL, engine_from_config, pool
 from sqlmodel import SQLModel
 
 from alembic import context
-
-load_dotenv()
-# TODO: Move to config.py
-POSTGRES_DB = environ["POSTGRES_DB"]
-POSTGRES_USER = environ["POSTGRES_USER"]
-POSTGRES_PASSWORD = environ["POSTGRES_PASSWORD"]
-DB_HOST = environ["DB_HOST"]
-DB_PORT = int(environ["DB_PORT"])
+from config import DB_HOST, DB_PORT, POSTGRES_DB, POSTGRES_PASSWORD, POSTGRES_USER
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
