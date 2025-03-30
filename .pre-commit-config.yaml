@@ -1,6 +1,6 @@
 exclude: 'migrations/.*|tests/.*|\.csv'
 default_language_version:
-  python: python3.10
+  python: python3.12
 default_stages: [ pre-commit ]
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks

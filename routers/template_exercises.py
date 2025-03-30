@@ -2,11 +2,8 @@ from fastapi import APIRouter
 from sqlmodel import Session, select
 
 from models.template_exercise import TemplateExercise
-from routers.utils.database import engine
-from routers.utils.order_exercises import (
-    decrement_exercise_order,
-    update_exercise_order,
-)
+from shared.utils.database import engine
+from shared.utils.order_exercises import decrement_exercise_order, update_exercise_order
 
 router = APIRouter(
     prefix="/template_exercises",

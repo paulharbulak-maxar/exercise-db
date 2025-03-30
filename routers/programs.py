@@ -3,7 +3,7 @@ from sqlmodel import Session, select
 
 from models.program import Program
 from models.workout_template import WorkoutTemplate
-from routers.utils.database import engine
+from shared.utils.database import engine
 
 router = APIRouter(
     prefix="/programs",

@@ -15,7 +15,7 @@ from models.workout_exercise import WorkoutExercise
 from models.workout_template import WorkoutTemplate
 from routers import templates
 from routers.html.workouts import router as workout_router
-from routers.utils.database import engine
+from shared.utils.database import engine
 
 router = APIRouter(
     prefix="/html/workout_templates",

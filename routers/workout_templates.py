@@ -5,7 +5,7 @@ from models.template_exercise import TemplateExercise
 from models.workout import Workout
 from models.workout_exercise import WorkoutExercise
 from models.workout_template import WorkoutTemplate
-from routers.utils.database import engine
+from shared.utils.database import engine
 
 router = APIRouter(
     prefix="/workout_templates",
@@ -34,7 +34,7 @@ def get_workout_template(template_id: int):
 
 
 @router.post(
-"/{workout_template_id}/template_exercises/",
+    "/{workout_template_id}/template_exercises/",
     response_model=TemplateExercise,
 )
 def create_template_exercise(

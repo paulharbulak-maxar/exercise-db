@@ -12,7 +12,7 @@ from models.program_type import ProgramType
 from models.workout_template import WorkoutTemplate
 from routers import templates
 from routers.html.workout_templates import router as template_router
-from routers.utils.database import engine
+from shared.utils.database import engine
 
 router = APIRouter(
     prefix="/html/programs",

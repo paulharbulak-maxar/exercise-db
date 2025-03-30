@@ -7,7 +7,7 @@ from starlette.responses import RedirectResponse
 
 from models.exercise import Exercise
 from routers.html.programs import router as program_router
-from routers.utils.database import engine
+from shared.utils.database import engine
 
 router = APIRouter(
     prefix="/html/exercises",

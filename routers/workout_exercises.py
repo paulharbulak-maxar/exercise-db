@@ -9,12 +9,9 @@ from models.exercise import Exercise
 from models.exercise_set import ExerciseSet
 from models.workout_exercise import WorkoutExercise
 from routers import templates
-from routers.utils.database import engine
-from routers.utils.order_exercises import (
-    decrement_exercise_order,
-    update_exercise_order,
-)
 from routers.html.workouts import router as workout_router
+from shared.utils.database import engine
+from shared.utils.order_exercises import decrement_exercise_order, update_exercise_order
 
 router = APIRouter(
     prefix="/html/workout_exercises",

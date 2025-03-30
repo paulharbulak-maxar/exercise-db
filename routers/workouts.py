@@ -3,8 +3,8 @@ from sqlmodel import Session, select
 
 from models.workout import Workout
 from models.workout_exercise import WorkoutExercise
-from routers.utils.database import engine
-from routers.utils.order_exercises import increment_exercise_order
+from shared.utils.database import engine
+from shared.utils.order_exercises import increment_exercise_order
 
 router = APIRouter(
     prefix="/workouts",

@@ -4,12 +4,9 @@ from starlette import status
 from starlette.responses import RedirectResponse
 
 from models.template_exercise import TemplateExercise
-from routers.utils.database import engine
-from routers.utils.order_exercises import (
-    decrement_exercise_order,
-    update_exercise_order,
-)
 from routers.html.workout_templates import router as template_router
+from shared.utils.database import engine
+from shared.utils.order_exercises import decrement_exercise_order, update_exercise_order
 
 router = APIRouter(
     prefix="/html/template_exercises",
