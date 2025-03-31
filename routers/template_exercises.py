@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from sqlmodel import Session, select
 
 from models.models import TemplateExercise, TemplateExerciseResponse
@@ -12,7 +12,7 @@ router = APIRouter(
 )
 
 
-@router.post("/{template_exercise_id}", response_model=TemplateExerciseResponse)
+@router.post("", response_model=TemplateExerciseResponse)
 def create_template_exercise(template_exercise: TemplateExercise):
     with Session(engine) as session:
         session.add(template_exercise)
@@ -27,12 +27,15 @@ def get_template_exercise(template_exercise_id: int):
     with Session(engine) as session:
         template_exercise = session.exec(
             select(TemplateExercise).where(TemplateExercise.id == template_exercise_id)
-        ).one()
+        ).first()
+
+    if template_exercise is None:
+        raise HTTPException(status_code=404, detail="Template exercise not found")
 
     return template_exercise
 
 
-@router.delete("/{template_exercise_id}", response_model=dict)
+@router.delete("/{template_exercise_id}", status_code=204)
 def delete_template_exercise(template_exercise_id: int):
     with Session(engine) as session:
         template_exercise = session.exec(
@@ -42,8 +45,6 @@ def delete_template_exercise(template_exercise_id: int):
         decrement_exercise_order(session, template_exercise, "workout_template_id")
         session.delete(template_exercise)
         session.commit()
-
-        return {"deleted": template_exercise.id}
 
 
 @router.put("/{template_exercise_id}", response_model=TemplateExerciseResponse)

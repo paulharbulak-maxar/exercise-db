@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 from sqlmodel import Session, select
 
 from models.models import (
@@ -17,7 +17,13 @@ router = APIRouter(
 )
 
 
-@router.post("/", response_model=WorkoutResponse)
+# TODO: Implement using Depends
+def get_session():
+    with Session(engine) as session:
+        yield session
+
+
+@router.post("", response_model=WorkoutResponse)
 def create_workout(workout: Workout):
     with Session(engine) as session:
         session.add(workout)
@@ -36,10 +42,15 @@ def update_workout(workout: Workout):
     return workout
 
 
-@router.get("/", response_model=list[WorkoutResponse])
-def get_workouts():
+# TODO: Add program name and program type query filters (name)
+# Program type -> program -> workouts
+@router.get("", response_model=list[WorkoutResponse])
+def get_workouts(
+    offset: int = 0,
+    limit: int = Query(default=100, le=100),
+):
     with Session(engine) as session:
-        workouts = session.exec(select(Workout)).all()
+        workouts = session.exec(select(Workout).offset(offset).limit(limit)).all()
 
     return workouts
 
@@ -52,7 +63,10 @@ def get_workout(workout_id: int):
     return workout
 
 
-@router.post("/{workout_id}/workout_exercises/", response_model=WorkoutExerciseResponse)
+# TODO: Create route for delete
+
+
+@router.post("/{workout_id}/workout_exercises", response_model=WorkoutExerciseResponse)
 def create_workout_exercise(workout_id: int, workout_exercise: WorkoutExercise):
     with Session(engine) as session:
         increment_exercise_order(
@@ -66,7 +80,7 @@ def create_workout_exercise(workout_id: int, workout_exercise: WorkoutExercise):
 
 
 @router.get(
-    "/{workout_id}/workout_exercises/", response_model=list[WorkoutExerciseResponse]
+    "/{workout_id}/workout_exercises", response_model=list[WorkoutExerciseResponse]
 )
 def get_workout_exercises(workout_id: int = None):
     with Session(engine) as session:

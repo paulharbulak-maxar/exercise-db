@@ -11,7 +11,7 @@ router = APIRouter(
 )
 
 
-@router.post("/", response_model=User)
+@router.post("", response_model=User)
 def create_user(user: User):
     with Session(engine) as session:
         session.add(user)
@@ -20,7 +20,7 @@ def create_user(user: User):
         return user
 
 
-@router.get("/", response_model=list[User])
+@router.get("", response_model=list[User])
 def get_users():
     with Session(engine) as session:
         users = session.exec(select(User)).all()

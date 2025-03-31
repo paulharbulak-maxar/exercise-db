@@ -39,7 +39,7 @@ def get_workout_template(template_id: int):
 
 
 @router.post(
-    "/{workout_template_id}/template_exercises/",
+    "/{workout_template_id}/template_exercises",
     response_model=TemplateExerciseResponse,
 )
 def create_template_exercise(
@@ -60,7 +60,7 @@ def create_template_exercise(
 
 
 # Workout
-@router.post("/{template_id}/workouts/", response_model=WorkoutResponse)
+@router.post("/{template_id}/workouts", response_model=WorkoutResponse)
 def create_workout(template_id: int, workout: Workout):
     with Session(engine) as session:
         session.add(workout)
@@ -83,3 +83,7 @@ def create_workout(template_id: int, workout: Workout):
         session.commit()
 
     return workout
+
+
+# TODO: Create route for delete
+# TODO: Create route for GET template_exercises

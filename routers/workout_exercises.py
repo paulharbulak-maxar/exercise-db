@@ -1,18 +1,16 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Form, Request
+from fastapi import APIRouter, Form, HTTPException
 from sqlmodel import Session, select
 from starlette import status
 from starlette.responses import RedirectResponse
 
 from models.models import (
-    Exercise,
     ExerciseSet,
     ExerciseSetResponse,
     WorkoutExercise,
     WorkoutExerciseResponse,
 )
-from routers import templates
 from routers.html.workouts import router as workout_router
 from shared.utils.database import engine
 from shared.utils.order_exercises import decrement_exercise_order, update_exercise_order
@@ -25,56 +23,45 @@ router = APIRouter(
 
 
 @router.get("/{workout_exercise_id}", response_model=WorkoutExerciseResponse)
-# def get_workout_exercise(workout_exercise_id: int):
-def get_workout_exercise(request: Request, workout_exercise_id: int):
+def get_workout_exercise(workout_exercise_id: int):
     with Session(engine) as session:
         workout_exercise = session.exec(
             select(WorkoutExercise).where(WorkoutExercise.id == workout_exercise_id)
-        ).one()
+        ).first()
 
-        exercises = session.exec(select(Exercise)).all()
+        if workout_exercise is None:
+            raise HTTPException(status_code=404, detail="Workout exercise not found")
 
-        return templates.TemplateResponse(
-            request=request,
-            name="workout_exercise.html",
-            context={"workout_exercise": workout_exercise, "exercises": exercises},
-        )
+        return workout_exercise
 
 
-# @router.put("/workout_exercises/{workout_exercise_id}", response_model=WorkoutExercise)
-@router.post("/{workout_exercise_id}/update", response_model=WorkoutExerciseResponse)
+# TODO: Test to make sure the logic works with this request
+@router.put("/{workout_exercise_id}", response_model=WorkoutExerciseResponse)
 def update_workout_exercise(
-    workout_exercise_id: int,
-    order: Annotated[int, Form()],
-    exercise_id: Annotated[int, Form()],
-    notes: Annotated[str, Form()] = "",
+    workout_exercise_id: int, workout_exercise: WorkoutExercise
 ):
     with Session(engine) as session:
-        workout_exercise = session.exec(
-            select(WorkoutExercise).where(WorkoutExercise.id == workout_exercise_id)
-        ).one()
+        db_workout_exercise = session.get(WorkoutExercise, workout_exercise_id)
 
-        if order != workout_exercise.order:
-            update_exercise_order(session, workout_exercise, order)
-            workout_exercise.order = order
+        if not db_workout_exercise:
+            raise HTTPException(status_code=404, detail="Workout exercise not found")
 
-        workout_exercise.exercise_id = exercise_id
-        workout_exercise.notes = notes
-        session.add(workout_exercise)
+        if workout_exercise.order != db_workout_exercise.order:
+            update_exercise_order(session, db_workout_exercise, workout_exercise.order)
+            db_workout_exercise.order = workout_exercise.order
+
+        workout_exercise_data = workout_exercise.model_dump(exclude_unset=True)
+        for key, value in workout_exercise_data.items():
+            setattr(db_workout_exercise, key, value)
+
+        session.add(db_workout_exercise)
         session.commit()
-        session.refresh(workout_exercise)
+        session.refresh(db_workout_exercise)
 
-        # return workout_exercise
-        return RedirectResponse(
-            workout_router.url_path_for(
-                "get_workout", workout_id=workout_exercise.workout_id
-            ),
-            status_code=status.HTTP_303_SEE_OTHER,
-        )
+        return db_workout_exercise
 
 
-# @router.delete("/workout_exercises/{workout_exercise_id}")
-@router.post("/{workout_exercise_id}/delete", response_model=WorkoutExerciseResponse)
+@router.delete("/{workout_exercise_id}", status_code=204)
 def delete_workout_exercise(workout_exercise_id: int):
     with Session(engine) as session:
         workout_exercise = session.exec(
@@ -86,18 +73,10 @@ def delete_workout_exercise(workout_exercise_id: int):
         session.delete(workout_exercise)
         session.commit()
 
-        return RedirectResponse(
-            workout_router.url_path_for(
-                "get_workout",
-                workout_id=workout_id,
-            ),
-            status_code=status.HTTP_303_SEE_OTHER,
-        )
-
 
 # WorkoutSet
 @router.post(
-    "/{workout_exercise_id}/exercise_sets/",
+    "/{workout_exercise_id}/exercise_sets",
     response_model=ExerciseSetResponse,
 )
 def create_exercise_set(
@@ -126,7 +105,7 @@ def create_exercise_set(
 
 
 @router.get(
-    "/workout_exercises/{workout_exercise_id}/exercise_sets/",
+    "/workout_exercises/{workout_exercise_id}/exercise_sets",
     response_model=list[ExerciseSetResponse],
 )
 def get_exercise_sets(workout_exercise_id: int):

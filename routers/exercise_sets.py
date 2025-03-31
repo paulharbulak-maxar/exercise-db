@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from sqlmodel import Session, select
 
 from models.models import ExerciseSet, ExerciseSetResponse
@@ -11,7 +11,20 @@ router = APIRouter(
 )
 
 
-@router.post("/{exercise_set_id}", response_model=ExerciseSetResponse)
+@router.get("", response_model=ExerciseSetResponse)
+def get_exercise_set(exercise_set_id: int):
+    with Session(engine) as session:
+        exercise_set = session.exec(
+            select(ExerciseSet).where(ExerciseSet.id == exercise_set_id)
+        ).first()
+
+        if exercise_set is None:
+            raise HTTPException(status_code=404, detail="Exercise set not found")
+
+        return exercise_set
+
+
+@router.post("/{exercise_set_id}", response_model=list[ExerciseSetResponse])
 def get_exercise_set(exercise_set_id: int):
     with Session(engine) as session:
         exercise_sets = session.exec(
@@ -19,3 +32,6 @@ def get_exercise_set(exercise_set_id: int):
         ).all()
 
         return exercise_sets
+
+
+# TODO: Create route for delete
