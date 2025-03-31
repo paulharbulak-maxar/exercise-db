@@ -1,8 +1,12 @@
-from fastapi import APIRouter, Form, Request
+from fastapi import APIRouter, Request
 from sqlmodel import Session, select
 
-from models.program import Program
-from models.workout_template import WorkoutTemplate
+from models.models import (
+    Program,
+    ProgramResponse,
+    WorkoutTemplate,
+    WorkoutTemplateResponse,
+)
 from shared.utils.database import engine
 
 router = APIRouter(
@@ -12,7 +16,7 @@ router = APIRouter(
 )
 
 
-@router.post("/", response_model=Program)
+@router.post("/", response_model=ProgramResponse)
 def create_program(program: Program):
     with Session(engine) as session:
         session.add(program)
@@ -22,7 +26,7 @@ def create_program(program: Program):
     return program
 
 
-@router.get("/", response_model=list[Program])
+@router.get("/", response_model=list[ProgramResponse])
 def get_programs():
     with Session(engine) as session:
         programs = session.exec(select(Program)).all()
@@ -30,7 +34,7 @@ def get_programs():
     return programs
 
 
-@router.get("/{program_id}", response_model=list[Program])
+@router.get("/{program_id}", response_model=ProgramResponse)
 def get_program(request: Request, program_id: int):
     with Session(engine) as session:
         program = session.exec(select(Program).where(Program.id == program_id)).one()
@@ -51,7 +55,7 @@ def delete_program(program_id: int):
 
 # Workout Template
 # Form for selecting n number of exercises for each workout
-@router.post("/{program_id}/workout_templates/", response_model=WorkoutTemplate)
+@router.post("/{program_id}/workout_templates/", response_model=WorkoutTemplateResponse)
 def create_workout_template(workout_template: WorkoutTemplate):
     with Session(engine) as session:
         session.add(workout_template)

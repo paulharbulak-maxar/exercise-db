@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from sqlmodel import Session, select
 
-from models.user import User
+from models.models import User
 from shared.utils.database import engine
 
 router = APIRouter(

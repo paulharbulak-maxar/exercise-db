@@ -6,9 +6,7 @@ from sqlmodel import Session, select
 from starlette import status
 from starlette.responses import RedirectResponse
 
-from models.exercise import Exercise
-from models.workout import Workout
-from models.workout_exercise import WorkoutExercise
+from models.models import Exercise, Workout, WorkoutExercise
 from routers import templates
 from shared.utils.database import engine
 from shared.utils.order_exercises import increment_exercise_order

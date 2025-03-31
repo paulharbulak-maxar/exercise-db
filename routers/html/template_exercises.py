@@ -3,7 +3,7 @@ from sqlmodel import Session, select
 from starlette import status
 from starlette.responses import RedirectResponse
 
-from models.template_exercise import TemplateExercise
+from models.models import TemplateExercise
 from routers.html.workout_templates import router as template_router
 from shared.utils.database import engine
 from shared.utils.order_exercises import decrement_exercise_order, update_exercise_order

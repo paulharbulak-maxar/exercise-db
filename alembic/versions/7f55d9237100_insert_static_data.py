@@ -5,29 +5,31 @@ Revises: 8f2af354fce6
 Create Date: 2025-02-22 14:14:17.634816
 
 """
+
 from datetime import datetime
 from typing import Sequence, Union
 
-from alembic import context, op
 from sqlalchemy import create_engine, orm
 from sqlmodel import Session, delete
 
-from models.exercise import Exercise
-from models.exercise import Exercise
-from models.exercise_set import ExerciseSet
-from models.muscle import Muscle
-from models.muscle_group import MuscleGroup
-from models.program import Program
-from models.program_type import ProgramType
-from models.template_exercise import TemplateExercise
-from models.user import User
-from models.workout import Workout
-from models.workout_exercise import WorkoutExercise
-from models.workout_template import WorkoutTemplate
+from alembic import context, op
+from models.models import (
+    Exercise,
+    ExerciseSet,
+    Muscle,
+    MuscleGroup,
+    Program,
+    ProgramType,
+    TemplateExercise,
+    User,
+    Workout,
+    WorkoutExercise,
+    WorkoutTemplate,
+)
 
 # revision identifiers, used by Alembic.
-revision: str = '7f55d9237100'
-down_revision: Union[str, None] = '8f2af354fce6'
+revision: str = "7f55d9237100"
+down_revision: Union[str, None] = "8f2af354fce6"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from sqlmodel import Session, select
 
-from models.program_type import ProgramType
+from models.models import ProgramType, ProgramTypeResponse
 from shared.utils.database import engine
 
 router = APIRouter(
@@ -11,7 +11,7 @@ router = APIRouter(
 )
 
 
-@router.post("/", response_model=ProgramType)
+@router.post("/", response_model=ProgramTypeResponse)
 def create_program_type(program_type: ProgramType):
     with Session(engine) as session:
         session.add(program_type)
@@ -20,7 +20,7 @@ def create_program_type(program_type: ProgramType):
         return program_type
 
 
-@router.get("/", response_model=list[ProgramType])
+@router.get("/", response_model=list[ProgramTypeResponse])
 def get_program_types():
     with Session(engine) as session:
         program_types = session.exec(select(ProgramType)).all()

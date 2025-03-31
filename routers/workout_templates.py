@@ -1,10 +1,15 @@
 from fastapi import APIRouter
 from sqlmodel import Session, select
 
-from models.template_exercise import TemplateExercise
-from models.workout import Workout
-from models.workout_exercise import WorkoutExercise
-from models.workout_template import WorkoutTemplate
+from models.models import (
+    TemplateExercise,
+    TemplateExerciseResponse,
+    Workout,
+    WorkoutExercise,
+    WorkoutResponse,
+    WorkoutTemplate,
+    WorkoutTemplateResponse,
+)
 from shared.utils.database import engine
 
 router = APIRouter(
@@ -14,7 +19,7 @@ router = APIRouter(
 )
 
 
-@router.put("/{template_id}", response_model=WorkoutTemplate)
+@router.put("/{template_id}", response_model=WorkoutTemplateResponse)
 def update_workout_template(workout_template: WorkoutTemplate):
     with Session(engine) as session:
         session.add(workout_template)
@@ -23,7 +28,7 @@ def update_workout_template(workout_template: WorkoutTemplate):
     return workout_template
 
 
-@router.get("/{template_id}", response_model=list[WorkoutTemplate])
+@router.get("/{template_id}", response_model=list[WorkoutTemplateResponse])
 def get_workout_template(template_id: int):
     with Session(engine) as session:
         workout_template = session.exec(
@@ -35,7 +40,7 @@ def get_workout_template(template_id: int):
 
 @router.post(
     "/{workout_template_id}/template_exercises/",
-    response_model=TemplateExercise,
+    response_model=TemplateExerciseResponse,
 )
 def create_template_exercise(
     workout_template_id: int, template_exercise: TemplateExercise
@@ -55,7 +60,7 @@ def create_template_exercise(
 
 
 # Workout
-@router.post("/{template_id}/workouts/", response_model=Workout)
+@router.post("/{template_id}/workouts/", response_model=WorkoutResponse)
 def create_workout(template_id: int, workout: Workout):
     with Session(engine) as session:
         session.add(workout)
@@ -77,5 +82,4 @@ def create_workout(template_id: int, workout: Workout):
 
         session.commit()
 
-    # TODO: Return list of exercises with workout?
     return workout

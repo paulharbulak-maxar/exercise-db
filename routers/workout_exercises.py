@@ -5,9 +5,13 @@ from sqlmodel import Session, select
 from starlette import status
 from starlette.responses import RedirectResponse
 
-from models.exercise import Exercise
-from models.exercise_set import ExerciseSet
-from models.workout_exercise import WorkoutExercise
+from models.models import (
+    Exercise,
+    ExerciseSet,
+    ExerciseSetResponse,
+    WorkoutExercise,
+    WorkoutExerciseResponse,
+)
 from routers import templates
 from routers.html.workouts import router as workout_router
 from shared.utils.database import engine
@@ -20,7 +24,7 @@ router = APIRouter(
 )
 
 
-@router.get("/{workout_exercise_id}", response_model=WorkoutExercise)
+@router.get("/{workout_exercise_id}", response_model=WorkoutExerciseResponse)
 # def get_workout_exercise(workout_exercise_id: int):
 def get_workout_exercise(request: Request, workout_exercise_id: int):
     with Session(engine) as session:
@@ -38,7 +42,7 @@ def get_workout_exercise(request: Request, workout_exercise_id: int):
 
 
 # @router.put("/workout_exercises/{workout_exercise_id}", response_model=WorkoutExercise)
-@router.post("/{workout_exercise_id}/update", response_model=WorkoutExercise)
+@router.post("/{workout_exercise_id}/update", response_model=WorkoutExerciseResponse)
 def update_workout_exercise(
     workout_exercise_id: int,
     order: Annotated[int, Form()],
@@ -70,7 +74,7 @@ def update_workout_exercise(
 
 
 # @router.delete("/workout_exercises/{workout_exercise_id}")
-@router.post("/{workout_exercise_id}/delete", response_model=WorkoutExercise)
+@router.post("/{workout_exercise_id}/delete", response_model=WorkoutExerciseResponse)
 def delete_workout_exercise(workout_exercise_id: int):
     with Session(engine) as session:
         workout_exercise = session.exec(
@@ -94,7 +98,7 @@ def delete_workout_exercise(workout_exercise_id: int):
 # WorkoutSet
 @router.post(
     "/{workout_exercise_id}/exercise_sets/",
-    response_model=ExerciseSet,
+    response_model=ExerciseSetResponse,
 )
 def create_exercise_set(
     workout_exercise_id: int,
@@ -123,7 +127,7 @@ def create_exercise_set(
 
 @router.get(
     "/workout_exercises/{workout_exercise_id}/exercise_sets/",
-    response_model=list[ExerciseSet],
+    response_model=list[ExerciseSetResponse],
 )
 def get_exercise_sets(workout_exercise_id: int):
     with Session(engine) as session:

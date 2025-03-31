@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from sqlmodel import Session, select
 
-from models.template_exercise import TemplateExercise
+from models.models import TemplateExercise, TemplateExerciseResponse
 from shared.utils.database import engine
 from shared.utils.order_exercises import decrement_exercise_order, update_exercise_order
 
@@ -12,7 +12,7 @@ router = APIRouter(
 )
 
 
-@router.post("/{template_exercise_id}", response_model=TemplateExercise)
+@router.post("/{template_exercise_id}", response_model=TemplateExerciseResponse)
 def create_template_exercise(template_exercise: TemplateExercise):
     with Session(engine) as session:
         session.add(template_exercise)
@@ -22,7 +22,7 @@ def create_template_exercise(template_exercise: TemplateExercise):
     return template_exercise
 
 
-@router.get("/{template_exercise_id}", response_model=TemplateExercise)
+@router.get("/{template_exercise_id}", response_model=TemplateExerciseResponse)
 def get_template_exercise(template_exercise_id: int):
     with Session(engine) as session:
         template_exercise = session.exec(
@@ -46,7 +46,7 @@ def delete_template_exercise(template_exercise_id: int):
         return {"deleted": template_exercise.id}
 
 
-@router.put("/{template_exercise_id}", response_model=TemplateExercise)
+@router.put("/{template_exercise_id}", response_model=TemplateExerciseResponse)
 def update_template_exercise(
     template_exercise_id: int,
     order: int,

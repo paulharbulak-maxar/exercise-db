@@ -5,7 +5,7 @@ from sqlmodel import Session
 from starlette import status
 from starlette.responses import RedirectResponse
 
-from models.exercise import Exercise
+from models.models import Exercise
 from routers.html.programs import router as program_router
 from shared.utils.database import engine
 

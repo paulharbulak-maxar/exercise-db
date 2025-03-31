@@ -1,8 +1,12 @@
 from fastapi import APIRouter
 from sqlmodel import Session, select
 
-from models.workout import Workout
-from models.workout_exercise import WorkoutExercise
+from models.models import (
+    Workout,
+    WorkoutExercise,
+    WorkoutExerciseResponse,
+    WorkoutResponse,
+)
 from shared.utils.database import engine
 from shared.utils.order_exercises import increment_exercise_order
 
@@ -13,7 +17,7 @@ router = APIRouter(
 )
 
 
-@router.post("/", response_model=Workout)
+@router.post("/", response_model=WorkoutResponse)
 def create_workout(workout: Workout):
     with Session(engine) as session:
         session.add(workout)
@@ -23,7 +27,7 @@ def create_workout(workout: Workout):
     return workout
 
 
-@router.put("/{workout_id}", response_model=Workout)
+@router.put("/{workout_id}", response_model=WorkoutResponse)
 def update_workout(workout: Workout):
     with Session(engine) as session:
         session.add(workout)
@@ -32,7 +36,7 @@ def update_workout(workout: Workout):
     return workout
 
 
-@router.get("/", response_model=list[Workout])
+@router.get("/", response_model=list[WorkoutResponse])
 def get_workouts():
     with Session(engine) as session:
         workouts = session.exec(select(Workout)).all()
@@ -40,7 +44,7 @@ def get_workouts():
     return workouts
 
 
-@router.get("/{workout_id}", response_model=Workout)
+@router.get("/{workout_id}", response_model=WorkoutResponse)
 def get_workout(workout_id: int):
     with Session(engine) as session:
         workout = session.exec(select(Workout).where(Workout.id == workout_id)).one()
@@ -48,7 +52,7 @@ def get_workout(workout_id: int):
     return workout
 
 
-@router.post("/{workout_id}/workout_exercises/", response_model=WorkoutExercise)
+@router.post("/{workout_id}/workout_exercises/", response_model=WorkoutExerciseResponse)
 def create_workout_exercise(workout_id: int, workout_exercise: WorkoutExercise):
     with Session(engine) as session:
         increment_exercise_order(
@@ -61,7 +65,9 @@ def create_workout_exercise(workout_id: int, workout_exercise: WorkoutExercise):
     return workout_exercise
 
 
-@router.get("/{workout_id}/workout_exercises/", response_model=list[WorkoutExercise])
+@router.get(
+    "/{workout_id}/workout_exercises/", response_model=list[WorkoutExerciseResponse]
+)
 def get_workout_exercises(workout_id: int = None):
     with Session(engine) as session:
         workout_exercises = session.exec(

@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from sqlmodel import Session, select
 
-from models.exercise import Exercise
+from models.models import Exercise, ExerciseResponse
 from shared.utils.database import engine
 
 router = APIRouter(
@@ -11,7 +11,7 @@ router = APIRouter(
 )
 
 
-@router.post("/", response_model=Exercise)
+@router.post("/", response_model=ExerciseResponse)
 def create_exercise(exercise: Exercise):
     with Session(engine) as session:
         session.add(exercise)
@@ -21,7 +21,7 @@ def create_exercise(exercise: Exercise):
         return exercise
 
 
-@router.get("/", response_model=list[Exercise])
+@router.get("/", response_model=list[ExerciseResponse])
 def get_exercises():
     with Session(engine) as session:
         exercises = session.exec(select(Exercise)).all()

@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from sqlmodel import Session, select
 
-from models.muscle import Muscle
+from models.models import Muscle, MuscleResponse
 from shared.utils.database import engine
 
 router = APIRouter(
@@ -11,7 +11,7 @@ router = APIRouter(
 )
 
 
-@router.post("/", response_model=Muscle)
+@router.post("/", response_model=MuscleResponse)
 def create_muscle(muscle: Muscle):
     with Session(engine) as session:
         session.add(muscle)
@@ -20,7 +20,7 @@ def create_muscle(muscle: Muscle):
         return muscle
 
 
-@router.get("/", response_model=list[Muscle])
+@router.get("/", response_model=list[MuscleResponse])
 def get_muscles():
     with Session(engine) as session:
         muscles = session.exec(select(Muscle)).all()

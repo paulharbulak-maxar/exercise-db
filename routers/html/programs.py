@@ -6,10 +6,7 @@ from sqlmodel import Session, select
 from starlette import status
 from starlette.responses import RedirectResponse
 
-from models.muscle import Muscle
-from models.program import Program
-from models.program_type import ProgramType
-from models.workout_template import WorkoutTemplate
+from models.models import Muscle, Program, ProgramType, WorkoutTemplate
 from routers import templates
 from routers.html.workout_templates import router as template_router
 from shared.utils.database import engine
