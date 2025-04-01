@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from sqlmodel import Session, select
 
 from models.models import (
@@ -28,12 +28,13 @@ def update_workout_template(workout_template: WorkoutTemplate):
     return workout_template
 
 
-@router.get("/{template_id}", response_model=list[WorkoutTemplateResponse])
+@router.get("/{template_id}", response_model=WorkoutTemplateResponse)
 def get_workout_template(template_id: int):
     with Session(engine) as session:
-        workout_template = session.exec(
-            select(WorkoutTemplate).where(WorkoutTemplate.id == template_id)
-        ).one()
+        workout_template = session.get(WorkoutTemplate, template_id)
+
+        if not workout_template:
+            raise HTTPException(status_code=404, detail="Workout template not found")
 
         return workout_template
 
@@ -46,9 +47,7 @@ def create_template_exercise(
     workout_template_id: int, template_exercise: TemplateExercise
 ):
     with Session(engine) as session:
-        workout_template = session.exec(
-            select(WorkoutTemplate).where(WorkoutTemplate.id == workout_template_id)
-        ).one()
+        workout_template = session.get(WorkoutTemplate, workout_template_id)
 
         if not template_exercise.order:
             template_exercise.order = len(workout_template.exercises) + 1
@@ -68,9 +67,7 @@ def create_workout(template_id: int, workout: Workout):
         session.refresh(workout)
 
         # Automatically create exercises for new workout using template exercises
-        workout_template = session.exec(
-            select(WorkoutTemplate).where(WorkoutTemplate.id == template_id)
-        ).one()
+        workout_template = session.get(WorkoutTemplate, template_id)
 
         for template_ex in workout_template.exercises:
             workout_exercise = WorkoutExercise(
@@ -85,5 +82,24 @@ def create_workout(template_id: int, workout: Workout):
     return workout
 
 
-# TODO: Create route for delete
-# TODO: Create route for GET template_exercises
+@router.delete("/{template_id}", status_code=204)
+def delete_workout_template(template_id: int):
+    with Session(engine) as session:
+        workout_template = session.get(WorkoutTemplate, template_id)
+
+        if not workout_template:
+            raise HTTPException(status_code=404, detail="Workout template not found")
+
+        session.delete(workout_template)
+        session.commit()
+
+
+@router.get("/{template_id}/exercises", response_model=list[TemplateExercise])
+def get_workout_template_exercises(template_id: int):
+    with Session(engine) as session:
+        workout_template = session.get(WorkoutTemplate, template_id)
+
+        if not workout_template:
+            raise HTTPException(status_code=404, detail="Workout template not found")
+
+        return workout_template.exercises

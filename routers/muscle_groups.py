@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from sqlmodel import Session, select
 
-from models.models import MuscleGroup, MuscleGroupResponse
+from models.models import MuscleGroup, MuscleGroupResponse, MuscleResponse
 from shared.utils.database import engine
 
 router = APIRouter(
@@ -30,9 +30,7 @@ def get_muscle_groups():
 @router.get("/{muscle_group_id}", response_model=MuscleGroupResponse)
 def get_muscle_group(muscle_group_id: int):
     with Session(engine) as session:
-        muscle_group = session.exec(
-            select(MuscleGroup).where(MuscleGroup.id == muscle_group_id)
-        ).first()
+        muscle_group = session.get(MuscleGroup, muscle_group_id)
 
         if muscle_group is None:
             raise HTTPException(status_code=404, detail="Muscle group not found")
@@ -40,5 +38,24 @@ def get_muscle_group(muscle_group_id: int):
         return muscle_group
 
 
-# TODO: Create route for delete
-# TODO: Create route for GET muscles by muscle group
+@router.delete("/{muscle_group_id}", status_code=204)
+def delete_muscle_group(muscle_group_id: int):
+    with Session(engine) as session:
+        muscle_group = session.get(MuscleGroup, muscle_group_id)
+
+        if muscle_group is None:
+            raise HTTPException(status_code=404, detail="Muscle group not found")
+
+        session.delete(muscle_group)
+        session.commit()
+
+
+@router.get("/{muscle_group_id}/muscles", response_model=list[MuscleResponse])
+def get_muscles_by_muscle_group(muscle_group_id: int):
+    with Session(engine) as session:
+        muscle_group = session.get(MuscleGroup, muscle_group_id)
+
+        if muscle_group is None:
+            raise HTTPException(status_code=404, detail="Muscle group not found")
+
+        return muscle_group.muscles

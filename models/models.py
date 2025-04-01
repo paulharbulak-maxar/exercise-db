@@ -279,6 +279,7 @@ class WorkoutExercise(WorkoutExerciseBase, table=True):
 
 class WorkoutExerciseResponse(WorkoutExerciseBase):
     id: int
+    # exercise: ExerciseResponse
 
 
 class WorkoutBase(SQLModel):

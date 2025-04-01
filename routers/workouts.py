@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException, Query
 from sqlmodel import Session, select
 
 from models.models import (
@@ -58,12 +58,24 @@ def get_workouts(
 @router.get("/{workout_id}", response_model=WorkoutResponse)
 def get_workout(workout_id: int):
     with Session(engine) as session:
-        workout = session.exec(select(Workout).where(Workout.id == workout_id)).one()
+        workout = session.get(Workout, workout_id)
+
+        if not workout:
+            raise HTTPException(status_code=404, detail="Workout not found")
 
     return workout
 
 
-# TODO: Create route for delete
+@router.delete("/{workout_id}", status_code=204)
+def delete_workout(workout_id: int):
+    with Session(engine) as session:
+        workout = session.get(Workout, workout_id)
+
+        if not workout:
+            raise HTTPException(status_code=404, detail="Workout not found")
+
+        session.delete(workout)
+        session.commit()
 
 
 @router.post("/{workout_id}/workout_exercises", response_model=WorkoutExerciseResponse)
@@ -79,9 +91,7 @@ def create_workout_exercise(workout_id: int, workout_exercise: WorkoutExercise):
     return workout_exercise
 
 
-@router.get(
-    "/{workout_id}/workout_exercises", response_model=list[WorkoutExerciseResponse]
-)
+@router.get("/{workout_id}/exercises", response_model=list[WorkoutExerciseResponse])
 def get_workout_exercises(workout_id: int = None):
     with Session(engine) as session:
         workout_exercises = session.exec(

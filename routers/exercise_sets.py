@@ -34,4 +34,13 @@ def get_exercise_set(exercise_set_id: int):
         return exercise_sets
 
 
-# TODO: Create route for delete
+@router.delete("/{exercise_set_id}", status_code=204)
+def delete_exercise_set(exercise_set_id: int):
+    with Session(engine) as session:
+        exercise_set = session.get(ExerciseSet, exercise_set_id)
+
+        if not exercise_set:
+            raise HTTPException(status_code=404, detail="Exercise set not found")
+
+        session.delete(exercise_set)
+        session.commit()

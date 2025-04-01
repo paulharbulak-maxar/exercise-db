@@ -4,6 +4,7 @@ from sqlmodel import Session, select
 from models.models import (
     Program,
     ProgramResponse,
+    WorkoutResponse,
     WorkoutTemplate,
     WorkoutTemplateResponse,
 )
@@ -55,7 +56,7 @@ def delete_program(program_id: int):
 
 
 # Workout Template
-@router.post("/{program_id}/workout_templates", response_model=WorkoutTemplateResponse)
+@router.post("/{program_id}/templates", response_model=WorkoutTemplateResponse)
 def create_workout_template(workout_template: WorkoutTemplate):
     with Session(engine) as session:
         session.add(workout_template)
@@ -65,4 +66,24 @@ def create_workout_template(workout_template: WorkoutTemplate):
     return workout_template
 
 
-# TODO: Create route for GET and PUT workout_templates
+# TODO: Create route for PUT workout_templates
+@router.get("/{program_id}/templates", response_model=list[WorkoutTemplateResponse])
+def get_program_workout_templates(program_id: int):
+    with Session(engine) as session:
+        program = session.get(Program, program_id)
+
+        if not program:
+            raise HTTPException(status_code=404, detail="Program not found")
+
+        return program.workout_templates
+
+
+@router.get("/{program_id}/workouts", response_model=list[WorkoutResponse])
+def get_program_workouts(program_id: int):
+    with Session(engine) as session:
+        program = session.get(Program, program_id)
+
+        if not program:
+            raise HTTPException(status_code=404, detail="Program not found")
+
+        return program.workouts

@@ -30,9 +30,7 @@ def get_program_types():
 @router.get("/{program_type_id}", response_model=ProgramTypeResponse)
 def get_program_type(program_type_id: int):
     with Session(engine) as session:
-        program = session.exec(
-            select(ProgramType).where(ProgramType.id == program_type_id)
-        ).first()
+        program = session.get(ProgramType, program_type_id)
 
         if program is None:
             raise HTTPException(status_code=404, detail="Program type not found")
@@ -40,5 +38,16 @@ def get_program_type(program_type_id: int):
         return program
 
 
-# TODO: Create route for delete
+@router.delete("/{program_type_id}", status_code=204)
+def delete_program_type(program_type_id: int):
+    with Session(engine) as session:
+        program = session.get(ProgramType, program_type_id)
+
+        if program is None:
+            raise HTTPException(status_code=404, detail="Program type not found")
+
+        session.delete(program)
+        session.commit()
+
+
 # TODO: Create route for GET programs by program_type

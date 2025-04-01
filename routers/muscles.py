@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from sqlmodel import Session, select
 
-from models.models import Muscle, MuscleResponse
+from models.models import Muscle, MuscleGroup, MuscleResponse
 from shared.utils.database import engine
 
 router = APIRouter(
@@ -20,18 +20,25 @@ def create_muscle(muscle: Muscle):
         return muscle
 
 
-# TODO: Add muscle group name query filter
 @router.get("", response_model=list[MuscleResponse])
-def get_muscles():
+def get_muscles(muscle_group: str = None):
     with Session(engine) as session:
-        muscles = session.exec(select(Muscle)).all()
+        query = select(Muscle)
+        if muscle_group:
+            muscle_group_result = session.exec(
+                select(MuscleGroup).where(MuscleGroup.name == muscle_group)
+            ).first()
+
+            query = query.where(Muscle.muscle_group == muscle_group_result)
+
+        muscles = session.exec(query).all()
         return muscles
 
 
 @router.get("/{muscle_id}", response_model=MuscleResponse)
 def get_muscle(muscle_id: int):
     with Session(engine) as session:
-        muscle = session.exec(select(Muscle).where(Muscle.id == muscle_id)).first()
+        muscle = session.get(Muscle, muscle_id)
 
         if muscle is None:
             raise HTTPException(status_code=404, detail="Muscle not found")
@@ -39,4 +46,13 @@ def get_muscle(muscle_id: int):
         return muscle
 
 
-# TODO: Create route for delete
+@router.delete("/{muscle_id}", status_code=204)
+def delete_muscle(muscle_id: int):
+    with Session(engine) as session:
+        muscle = session.get(Muscle, muscle_id)
+
+        if muscle is None:
+            raise HTTPException(status_code=404, detail="Muscle not found")
+
+        session.delete(muscle)
+        session.commit()
