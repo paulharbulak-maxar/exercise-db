@@ -21,7 +21,6 @@ def create_exercise(exercise: Exercise):
         return exercise
 
 
-# TODO: Add muscle and muscle group name query filters
 @router.get("", response_model=list[ExerciseResponse])
 def get_exercises(
     muscle: str = None,
