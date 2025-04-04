@@ -153,12 +153,12 @@ def insert_records():  # exercise_table
     inc_db_bp = Exercise(
         name="Incline Dumbbell Bench Press",
         muscle_primary=pecs.id,
-        muscle_secondary=shoulders.id,
+        muscle_secondary=front_delt.id,
         is_compound=True,
     )
     cg_bp = Exercise(
         name="Close-grip Bench Press",
-        muscle_primary=chest.id,
+        muscle_primary=pecs.id,
         muscle_secondary=triceps.id,
         is_compound=True,
     )
@@ -192,9 +192,7 @@ def insert_records():  # exercise_table
         muscle_secondary=biceps.id,
         is_compound=False,
     )
-    pre_curl = Exercise(
-        name="Preacher Curl", muscle_primary=biceps.id, is_compound=False
-    )
+    bb_curl = Exercise(name="Barbell Curl", muscle_primary=biceps.id, is_compound=False)
     squat = Exercise(
         name="Squat",
         muscle_primary=quads.id,
@@ -237,7 +235,7 @@ def insert_records():  # exercise_table
         bb_row,
         sl_dl,
         sumo_dl,
-        pre_curl,
+        bb_curl,
         hammer_curl,
         cg_bp,
         squat,
@@ -292,6 +290,7 @@ def insert_records():  # exercise_table
         ("Deadlift", glutes.id, hamstrings.id, True),
         ("Romainian Deadlift", glutes.id, hamstrings.id, True),
         ("Rack Pull", glutes.id, hamstrings.id, True),
+        ("Jefferson Curl", erectors.id, hamstrings.id, True),
         ("Deficit Deadlift", glutes.id, hamstrings.id, True),
         ("One-arm Deadlift", glutes.id, hamstrings.id, True),
         ("Good Morning", glutes.id, erectors.id, True),
@@ -315,7 +314,6 @@ def insert_records():  # exercise_table
         ("Jump Shrug", traps.id, None, False),
         ("Trap 3 Raise", traps.id, rear_delt.id, False),
         ("Prone Trap Raise", traps.id, rear_delt.id, False),
-        ("Barbell Curl", biceps.id, None, False),
         ("Dumbbell Curl", biceps.id, None, False),
         ("Cable Curl", biceps.id, None, False),
         ("Preacher Curl", biceps.id, None, False),
@@ -324,7 +322,7 @@ def insert_records():  # exercise_table
         ("Incline Dumbbell Curl", biceps.id, None, False),
         ("Drag Curl", biceps.id, None, False),
         ("Concentration Curl", biceps.id, None, False),
-        ("Hammer Curl", brachialis.id, biceps.id, False),
+        ("Preacher Curl", biceps.id, None, False),
         ("Reverse Curl", brachioradialis.id, biceps.id, False),
         ("Bench Dips", triceps.id, None, False),
         ("Dips", triceps.id, chest.id, True),
@@ -332,14 +330,11 @@ def insert_records():  # exercise_table
         ("Cable Triceps Extension", triceps.id, None, False),
         ("Incline Barbell Triceps Extension", triceps.id, None, False),
         ("Dumbbell Kickback", triceps.id, None, False),
-        ("Close-grip Bench Press", chest.id, triceps.id, True),
         ("J.M. Press", triceps.id, chest.id, True),
         ("Dumbbell Triceps Extension", triceps.id, None, False),
         ("Tricep Pushdown", triceps.id, None, False),
         ("Decline Triceps Extension", triceps.id, None, False),
         ("One-arm Dumbbell Triceps Extension", triceps.id, None, False),
-        ("Squat", quads.id, glutes.id, True),
-        ("Front Squat", quads.id, glutes.id, True),
         ("Hack Squat", quads.id, glutes.id, True),
         ("Box Squat", quads.id, glutes.id, True),
         ("Safety Bar Squat", quads.id, glutes.id, True),
@@ -355,7 +350,6 @@ def insert_records():  # exercise_table
         ("Step-up", quads.id, glutes.id, True),
         ("Leg Press", quads.id, glutes.id, True),
         ("Leg Extension", quads.id, None, False),
-        ("Lying Leg Curl", biceps_femoris.id, None, False),
         ("Standing Leg Curl", biceps_femoris.id, None, False),
         ("Nordic Curl", hamstrings.id, biceps_femoris.id, True),
         ("Russian Curl", biceps_femoris.id, None, False),
@@ -370,7 +364,7 @@ def insert_records():  # exercise_table
         ("Incline Leg Raise", abdominals.id, None, False),
         ("Roman Chair Sit-up", abdominals.id, None, False),
         ("Crunches", abdominals.id, None, False),
-        ("Twisting Crunch", abdominals.id, obliques.id, False),
+        ("Bicycle Kick", abdominals.id, obliques.id, False),
         ("Twisting Sit-ups", abdominals.id, obliques.id, False),
         ("Side Crunch", obliques.id, None, False),
         ("Russian Twist", obliques.id, abdominals.id, False),
@@ -446,7 +440,7 @@ def insert_records():  # exercise_table
             order=4, workout_template_id=upper_b.id, exercise_id=bb_row.id
         ),
         TemplateExercise(
-            order=5, workout_template_id=upper_b.id, exercise_id=pre_curl.id
+            order=5, workout_template_id=upper_b.id, exercise_id=bb_curl.id
         ),
         TemplateExercise(
             order=1, workout_template_id=lower_b.id, exercise_id=sumo_dl.id

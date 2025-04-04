@@ -16,6 +16,8 @@ services:
       retries: 10
     networks:
       - exdb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
 
   adminer:
     image: adminer
