@@ -250,7 +250,7 @@ def insert_records():  # exercise_table
 
     exercises = [
         ("Dumbbell Bench Press", pecs.id, triceps.id, True),
-        ("Incline Bench Press", pecs.id, shoulders.id, True),
+        ("Incline Bench Press", pecs.id, front_delt.id, True),
         ("Decline Bench Press", pecs.id, triceps.id, True),
         ("Decline Dumbbell Bench Press", pecs.id, triceps.id, True),
         ("Board Press", pecs.id, triceps.id, True),
@@ -325,12 +325,12 @@ def insert_records():  # exercise_table
         ("Preacher Curl", biceps.id, None, False),
         ("Reverse Curl", brachioradialis.id, biceps.id, False),
         ("Bench Dips", triceps.id, None, False),
-        ("Dips", triceps.id, chest.id, True),
+        ("Dips", triceps.id, pecs.id, True),
         ("Skull Crushers", triceps.id, None, False),
         ("Cable Triceps Extension", triceps.id, None, False),
         ("Incline Barbell Triceps Extension", triceps.id, None, False),
         ("Dumbbell Kickback", triceps.id, None, False),
-        ("J.M. Press", triceps.id, chest.id, True),
+        ("J.M. Press", triceps.id, pecs.id, True),
         ("Dumbbell Triceps Extension", triceps.id, None, False),
         ("Tricep Pushdown", triceps.id, None, False),
         ("Decline Triceps Extension", triceps.id, None, False),
