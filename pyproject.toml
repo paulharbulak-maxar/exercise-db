@@ -19,6 +19,8 @@ black = "^24.4.2"
 flake8 = "^7.1.0"
 pre-commit = "^3.7.1"
 isort = "^5.13.2"
+pytest = "^9.0.2"
+httpx = "^0.28.1"
 
 [tool.isort]
 profile = "black"
