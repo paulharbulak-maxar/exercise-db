@@ -2,3 +2,5 @@
 venv/*
 /.env
 /exercise.db
+/frontend/node_modules/
+/frontend/dist/
