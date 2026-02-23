@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException, Query
 from sqlmodel import Session, or_, select
 
-from models.models import Exercise, ExerciseResponse, Muscle, MuscleGroup
+from models.models import Exercise, Muscle, MuscleGroup
+from models.schemas import ExerciseCreate, ExerciseRead
 from shared.utils.database import engine
 
 router = APIRouter(
@@ -11,17 +12,19 @@ router = APIRouter(
 )
 
 
-@router.post("", response_model=ExerciseResponse)
-def create_exercise(exercise: Exercise):
+@router.post("", response_model=ExerciseRead)
+def create_exercise(exercise: ExerciseCreate):
+    db_exercise = Exercise(**exercise.model_dump())
+
     with Session(engine) as session:
-        session.add(exercise)
+        session.add(db_exercise)
         session.commit()
-        session.refresh(exercise)
+        session.refresh(db_exercise)
 
-        return exercise
+        return db_exercise
 
 
-@router.get("", response_model=list[ExerciseResponse])
+@router.get("", response_model=list[ExerciseRead])
 def get_exercises(
     muscle: str = None,
     muscle_group: str = None,
@@ -64,7 +67,7 @@ def get_exercises(
         return exercises
 
 
-@router.get("/{exercise_id}", response_model=ExerciseResponse)
+@router.get("/{exercise_id}", response_model=ExerciseRead)
 def get_exercise(exercise_id: int):
     with Session(engine) as session:
         exercise = session.get(Exercise, exercise_id)

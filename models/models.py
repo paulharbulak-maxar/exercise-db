@@ -1,7 +1,6 @@
 from datetime import date, datetime
 from typing import Optional
 
-from pydantic import computed_field
 from sqlmodel import Field, Relationship, SQLModel
 
 
@@ -40,10 +39,6 @@ class ProgramType(ProgramTypeBase, table=True):
     )
 
 
-class ProgramTypeResponse(ProgramTypeBase):
-    id: int
-
-
 class ProgramBase(SQLModel):
     name: str
     # user_id: int | None = Field(default=None, foreign_key="user.id")
@@ -76,10 +71,6 @@ class Program(ProgramBase, table=True):
     )
 
 
-class ProgramResponse(ProgramBase):
-    id: int
-
-
 class EmgActivationBase(SQLModel):
     muscle_id: int | None = Field(default=None, foreign_key="muscle.id")
     exercise_id: int | None = Field(default=None, foreign_key="exercise.id")
@@ -89,10 +80,6 @@ class EmgActivationBase(SQLModel):
 class EmgActivation(EmgActivationBase, table=True):
     __tablename__ = "emg_activation"
     id: int | None = Field(default=None, primary_key=True)
-
-
-class EmgActivationResponse(EmgActivationBase):
-    id: int
 
 
 class MuscleGroupBase(SQLModel):
@@ -106,10 +93,6 @@ class MuscleGroup(MuscleGroupBase, table=True):
         back_populates="muscle_group",
         sa_relationship_kwargs=dict(lazy="selectin"),
     )
-
-
-class MuscleGroupResponse(MuscleGroupBase):
-    id: int
 
 
 class MuscleBase(SQLModel):
@@ -135,10 +118,6 @@ class Muscle(MuscleBase, table=True):
             lazy="selectin", foreign_keys="[Exercise.muscle_secondary]"
         ),
     )
-
-
-class MuscleResponse(MuscleBase):
-    id: int
 
 
 class ExerciseBase(SQLModel):
@@ -168,10 +147,6 @@ class Exercise(ExerciseBase, table=True):
     )
 
 
-class ExerciseResponse(ExerciseBase):
-    id: int
-
-
 class TemplateExerciseBase(SQLModel):
     order: int | None = 1
     workout_template_id: int | None = Field(
@@ -186,10 +161,6 @@ class TemplateExercise(TemplateExerciseBase, table=True):
     exercise: Exercise = Relationship(
         sa_relationship_kwargs=dict(lazy="selectin"),
     )
-
-
-class TemplateExerciseResponse(TemplateExerciseBase):
-    id: int
 
 
 class WorkoutTemplateBase(SQLModel):
@@ -222,10 +193,6 @@ class WorkoutTemplate(WorkoutTemplateBase, table=True):
     # )
 
 
-class WorkoutTemplateResponse(WorkoutTemplateBase):
-    id: int
-
-
 class ExerciseSetBase(SQLModel):
     set_number: int
     weight: int
@@ -242,10 +209,6 @@ class ExerciseSet(ExerciseSetBase, table=True):
         back_populates="sets",
         sa_relationship_kwargs=dict(lazy="selectin"),
     )
-
-
-class ExerciseSetResponse(ExerciseSetBase):
-    id: int
 
 
 class WorkoutExerciseBase(SQLModel):
@@ -277,11 +240,6 @@ class WorkoutExercise(WorkoutExerciseBase, table=True):
     )
 
 
-class WorkoutExerciseResponse(WorkoutExerciseBase):
-    id: int
-    # exercise: ExerciseResponse
-
-
 class WorkoutBase(SQLModel):
     # TODO: Figure out how to create relationship thru another relationship (program -> template -> workout)
     program_id: int | None = Field(default=None, foreign_key="program.id")
@@ -308,7 +266,3 @@ class Workout(WorkoutBase, table=True):
             passive_deletes=True,
         ),
     )
-
-
-class WorkoutResponse(WorkoutBase):
-    id: int

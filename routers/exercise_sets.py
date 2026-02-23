@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from sqlmodel import Session, select
 
-from models.models import ExerciseSet, ExerciseSetResponse
+from models.models import ExerciseSet
+from models.schemas import ExerciseSetRead, ExerciseSetUpdate
 from shared.utils.database import engine
 
 router = APIRouter(
@@ -11,7 +12,7 @@ router = APIRouter(
 )
 
 
-@router.get("", response_model=ExerciseSetResponse)
+@router.get("/{exercise_set_id}", response_model=ExerciseSetRead)
 def get_exercise_set(exercise_set_id: int):
     with Session(engine) as session:
         exercise_set = session.exec(
@@ -24,14 +25,23 @@ def get_exercise_set(exercise_set_id: int):
         return exercise_set
 
 
-@router.post("/{exercise_set_id}", response_model=list[ExerciseSetResponse])
-def get_exercise_set(exercise_set_id: int):
+@router.put("/{exercise_set_id}", response_model=ExerciseSetRead)
+def update_exercise_set(exercise_set_id: int, exercise_set: ExerciseSetUpdate):
     with Session(engine) as session:
-        exercise_sets = session.exec(
-            select(ExerciseSet).where(ExerciseSet.id == exercise_set_id)
-        ).all()
+        db_exercise_set = session.get(ExerciseSet, exercise_set_id)
 
-        return exercise_sets
+        if db_exercise_set is None:
+            raise HTTPException(status_code=404, detail="Exercise set not found")
+
+        exercise_set_data = exercise_set.model_dump(exclude_unset=True)
+        for key, value in exercise_set_data.items():
+            setattr(db_exercise_set, key, value)
+
+        session.add(db_exercise_set)
+        session.commit()
+        session.refresh(db_exercise_set)
+
+        return db_exercise_set
 
 
 @router.delete("/{exercise_set_id}", status_code=204)

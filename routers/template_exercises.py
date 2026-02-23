@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from sqlmodel import Session, select
 
-from models.models import TemplateExercise, TemplateExerciseResponse
+from models.models import TemplateExercise
+from models.schemas import TemplateExerciseCreate, TemplateExerciseRead
 from shared.utils.database import engine
 from shared.utils.order_exercises import decrement_exercise_order, update_exercise_order
 
@@ -12,17 +13,19 @@ router = APIRouter(
 )
 
 
-@router.post("", response_model=TemplateExerciseResponse)
-def create_template_exercise(template_exercise: TemplateExercise):
+@router.post("", response_model=TemplateExerciseRead)
+def create_template_exercise(template_exercise: TemplateExerciseCreate):
+    db_template_exercise = TemplateExercise(**template_exercise.model_dump())
+
     with Session(engine) as session:
-        session.add(template_exercise)
+        session.add(db_template_exercise)
         session.commit()
-        session.refresh(template_exercise)
+        session.refresh(db_template_exercise)
 
-    return template_exercise
+    return db_template_exercise
 
 
-@router.get("/{template_exercise_id}", response_model=TemplateExerciseResponse)
+@router.get("/{template_exercise_id}", response_model=TemplateExerciseRead)
 def get_template_exercise(template_exercise_id: int):
     with Session(engine) as session:
         template_exercise = session.exec(
@@ -47,7 +50,7 @@ def delete_template_exercise(template_exercise_id: int):
         session.commit()
 
 
-@router.put("/{template_exercise_id}", response_model=TemplateExerciseResponse)
+@router.put("/{template_exercise_id}", response_model=TemplateExerciseRead)
 def update_template_exercise(
     template_exercise_id: int,
     order: int,

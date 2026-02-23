@@ -21,10 +21,12 @@ def update_exercise_order(session, workout_exercise, order, foreign_key="workout
 
 
 # This is used to increment order of later exercises when new exercise is added
-def increment_exercise_order(session, model, workout_id, order):
+def increment_exercise_order(
+    session, model, parent_id, order, foreign_key="workout_id"
+):
     exercises_after = session.exec(
         select(model)
-        .where(getattr(model, "id") != workout_id)
+        .where(getattr(model, foreign_key) == parent_id)
         .where(getattr(model, "order") >= order)
     ).all()
 

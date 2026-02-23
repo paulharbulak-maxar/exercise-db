@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from sqlmodel import Session, select
 
-from models.models import ProgramResponse, ProgramType, ProgramTypeResponse
+from models.models import ProgramType
+from models.schemas import ProgramRead, ProgramTypeCreate, ProgramTypeRead
 from shared.utils.database import engine
 
 router = APIRouter(
@@ -11,23 +12,26 @@ router = APIRouter(
 )
 
 
-@router.post("", response_model=ProgramTypeResponse)
-def create_program_type(program_type: ProgramType):
+@router.post("", response_model=ProgramTypeRead)
+def create_program_type(program_type: ProgramTypeCreate):
+    db_program_type = ProgramType(**program_type.model_dump())
+
     with Session(engine) as session:
-        session.add(program_type)
+        session.add(db_program_type)
         session.commit()
-        session.refresh(program_type)
-        return program_type
+        session.refresh(db_program_type)
+        return db_program_type
 
 
-@router.get("", response_model=list[ProgramTypeResponse])
+@router.get("", response_model=list[ProgramTypeRead])
 def get_program_types():
     with Session(engine) as session:
         program_types = session.exec(select(ProgramType)).all()
         return program_types
 
 
-@router.get("/{program_type_id}", response_model=ProgramTypeResponse)
+# TODO: Create context manager for getting program_type by id and checking if None
+@router.get("/{program_type_id}", response_model=ProgramTypeRead)
 def get_program_type(program_type_id: int):
     with Session(engine) as session:
         program_type = session.get(ProgramType, program_type_id)
@@ -50,7 +54,7 @@ def delete_program_type(program_type_id: int):
         session.commit()
 
 
-@router.get("/{program_type_id}/programs", response_model=list[ProgramResponse])
+@router.get("/{program_type_id}/programs", response_model=list[ProgramRead])
 def get_programs_by_program_type(program_type_id: int):
     with Session(engine) as session:
         program_type = session.get(ProgramType, program_type_id)

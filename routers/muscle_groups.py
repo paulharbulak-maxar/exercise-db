@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from sqlmodel import Session, select
 
-from models.models import MuscleGroup, MuscleGroupResponse, MuscleResponse
+from models.models import MuscleGroup
+from models.schemas import MuscleGroupCreate, MuscleGroupRead, MuscleRead
 from shared.utils.database import engine
 
 router = APIRouter(
@@ -11,23 +12,25 @@ router = APIRouter(
 )
 
 
-@router.post("", response_model=MuscleGroupResponse)
-def create_muscle_group(muscle_group: MuscleGroup):
+@router.post("", response_model=MuscleGroupRead)
+def create_muscle_group(muscle_group: MuscleGroupCreate):
+    db_muscle_group = MuscleGroup(**muscle_group.model_dump())
+
     with Session(engine) as session:
-        session.add(muscle_group)
+        session.add(db_muscle_group)
         session.commit()
-        session.refresh(muscle_group)
-        return muscle_group
+        session.refresh(db_muscle_group)
+        return db_muscle_group
 
 
-@router.get("", response_model=list[MuscleGroupResponse])
+@router.get("", response_model=list[MuscleGroupRead])
 def get_muscle_groups():
     with Session(engine) as session:
         muscle_groups = session.exec(select(MuscleGroup)).all()
         return muscle_groups
 
 
-@router.get("/{muscle_group_id}", response_model=MuscleGroupResponse)
+@router.get("/{muscle_group_id}", response_model=MuscleGroupRead)
 def get_muscle_group(muscle_group_id: int):
     with Session(engine) as session:
         muscle_group = session.get(MuscleGroup, muscle_group_id)
@@ -50,7 +53,7 @@ def delete_muscle_group(muscle_group_id: int):
         session.commit()
 
 
-@router.get("/{muscle_group_id}/muscles", response_model=list[MuscleResponse])
+@router.get("/{muscle_group_id}/muscles", response_model=list[MuscleRead])
 def get_muscles_by_muscle_group(muscle_group_id: int):
     with Session(engine) as session:
         muscle_group = session.get(MuscleGroup, muscle_group_id)

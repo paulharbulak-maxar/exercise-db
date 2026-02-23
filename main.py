@@ -1,5 +1,6 @@
 import uvicorn
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from starlette.staticfiles import StaticFiles
 
 from routers import (
@@ -15,18 +16,24 @@ from routers import (
     workout_templates,
     workouts,
 )
-
-from routers.html import (
-    exercises as html_exercises,
-    programs as html_programs,
-    template_exercises as html_template_exercises,
-    workout_exercises as html_workout_exercises,
-    workout_templates as html_workout_templates,
-    workouts as html_workouts,
-)
+from routers.html import exercises as html_exercises
+from routers.html import programs as html_programs
+from routers.html import template_exercises as html_template_exercises
+from routers.html import workout_exercises as html_workout_exercises
+from routers.html import workout_templates as html_workout_templates
+from routers.html import workouts as html_workouts
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 routers = [
     exercise_sets.router,
     exercises.router,
@@ -45,7 +52,7 @@ routers = [
     html_template_exercises.router,
     html_workout_exercises.router,
     html_workout_templates.router,
-    html_workouts.router
+    html_workouts.router,
 ]
 
 for router in routers:
