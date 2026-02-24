@@ -21,7 +21,6 @@ const workoutExercises = ref([]);
 
 const exerciseDrafts = ref({});
 const setDrafts = ref({});
-const setsByWorkoutExercise = ref({});
 
 const newTemplate = ref({ day_of_week: 1, label: "" });
 const addTemplateExerciseDraft = ref({ exercise_id: "", order: "" });
@@ -144,7 +143,6 @@ async function loadProgramData(programId) {
       selectedWorkoutId.value = null;
       selectedWorkout.value = null;
       workoutExercises.value = [];
-      setsByWorkoutExercise.value = {};
     }
   });
   loading.value = false;
@@ -175,27 +173,11 @@ function initExerciseDrafts(items) {
 async function loadWorkoutDetails(workoutId) {
   loading.value = true;
   await withUiState(async () => {
-    const [workoutResult, workoutExerciseResult] = await Promise.all([
-      api.getWorkout(workoutId),
-      api.getWorkoutExercises(workoutId)
-    ]);
-
+    const workoutResult = await api.getWorkout(workoutId);
+    const workoutExerciseResult = workoutResult.exercises || [];
     selectedWorkout.value = workoutResult;
     workoutExercises.value = workoutExerciseResult;
     initExerciseDrafts(workoutExerciseResult);
-
-    const setPairs = await Promise.all(
-      workoutExerciseResult.map(async (workoutExercise) => [
-        workoutExercise.id,
-        await api.getWorkoutExerciseSets(workoutExercise.id)
-      ])
-    );
-
-    const nextSets = {};
-    setPairs.forEach(([workoutExerciseId, sets]) => {
-      nextSets[workoutExerciseId] = sets.sort((a, b) => a.set_number - b.set_number);
-    });
-    setsByWorkoutExercise.value = nextSets;
   });
   loading.value = false;
 }
@@ -557,7 +539,7 @@ onMounted(loadBootstrap);
           </div>
 
           <h4>Sets</h4>
-          <table class="set-table" v-if="setsByWorkoutExercise[workoutExercise.id]?.length">
+          <table class="set-table" v-if="workoutExercise.sets?.length">
             <thead>
               <tr>
                 <th>#</th>
@@ -567,7 +549,7 @@ onMounted(loadBootstrap);
               </tr>
             </thead>
             <tbody>
-              <tr v-for="setItem in setsByWorkoutExercise[workoutExercise.id]" :key="setItem.id">
+              <tr v-for="setItem in workoutExercise.sets" :key="setItem.id">
                 <td><input v-model="setItem.set_number" type="number" min="1" /></td>
                 <td><input v-model="setItem.weight" type="number" min="0" /></td>
                 <td><input v-model="setItem.reps" type="number" min="0" /></td>

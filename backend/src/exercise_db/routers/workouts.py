@@ -1,9 +1,11 @@
 from fastapi import APIRouter, HTTPException, Query
+from sqlalchemy.orm import selectinload
 from sqlmodel import Session, select
 
 from exercise_db.models.models import Workout, WorkoutExercise
 from exercise_db.models.schemas import (
     WorkoutCreate,
+    WorkoutDetailRead,
     WorkoutExerciseCreate,
     WorkoutExerciseRead,
     WorkoutRead,
@@ -72,13 +74,31 @@ def get_workouts(
     return workouts
 
 
-@router.get("/{workout_id}", response_model=WorkoutRead)
+@router.get("/{workout_id}", response_model=WorkoutDetailRead)
 def get_workout(workout_id: int):
     with Session(engine) as session:
-        workout = session.get(Workout, workout_id)
+        workout = session.exec(
+            select(Workout)
+            .where(Workout.id == workout_id)
+            .options(
+                selectinload(Workout.exercises).selectinload(WorkoutExercise.sets),
+            )
+        ).first()
 
         if not workout:
             raise HTTPException(status_code=404, detail="Workout not found")
+
+        workout.exercises = sorted(
+            workout.exercises, key=lambda exercise: (exercise.order, exercise.id or 0)
+        )
+        for exercise in workout.exercises:
+            exercise.sets = sorted(
+                exercise.sets,
+                key=lambda exercise_set: (
+                    exercise_set.set_number,
+                    exercise_set.id or 0,
+                ),
+            )
 
     return workout
 

@@ -178,3 +178,11 @@ class ExerciseSetUpdate(ExerciseSetBaseSchema):
 
 class ExerciseSetRead(ExerciseSetBaseSchema):
     id: int
+
+
+class WorkoutExerciseDetailRead(WorkoutExerciseRead):
+    sets: list[ExerciseSetRead] = []
+
+
+class WorkoutDetailRead(WorkoutRead):
+    exercises: list[WorkoutExerciseDetailRead] = []

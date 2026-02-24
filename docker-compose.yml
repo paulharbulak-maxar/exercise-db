@@ -19,6 +19,43 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  api:
+    build:
+      context: ./backend
+    restart: always
+    ports:
+      - 8000:8000
+    environment:
+      POSTGRES_DB: exercise
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Beebadoo1!
+      DB_HOST: postgres
+      DB_PORT: 5432
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/openapi.json')" ]
+      interval: 3s
+      timeout: 5s
+      retries: 20
+    networks:
+      - exdb
+
+  frontend:
+    build:
+      context: ./frontend
+    restart: always
+    ports:
+      - 5173:5173
+    environment:
+      VITE_API_BASE_URL: http://localhost:8000
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - exdb
+
   adminer:
     image: adminer
     restart: always

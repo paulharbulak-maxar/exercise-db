@@ -48,6 +48,20 @@ def test_get_workout_by_id(client, sample_workout):
 
     assert response.status_code == 200
     assert response.json()["id"] == sample_workout.id
+    assert response.json()["exercises"] == []
+
+
+def test_get_workout_by_id_includes_exercises_and_sets(
+    client, sample_workout, sample_workout_exercise, sample_exercise_set
+):
+    response = client.get(f"/workouts/{sample_workout.id}")
+
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data["exercises"]) == 1
+    assert data["exercises"][0]["id"] == sample_workout_exercise.id
+    assert len(data["exercises"][0]["sets"]) == 1
+    assert data["exercises"][0]["sets"][0]["id"] == sample_exercise_set.id
 
 
 def test_get_workout_not_found(client):
